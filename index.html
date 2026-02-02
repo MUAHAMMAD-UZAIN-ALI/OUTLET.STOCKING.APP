@@ -1,0 +1,5535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Outlet Stock Management System</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+  <!-- REQUIRED FOR EXCEL EXPORT (ORDER MATTERS) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* ALL YOUR EXISTING CSS STYLES GO HERE - THEY ARE THE SAME AS BEFORE */
+    :root {
+      --primary-color: #1a365d;
+      --secondary-color: #2d3748;
+      --accent-color: #3182ce;
+      --accent-hover: #2c5282;
+      --success-color: #38a169;
+      --danger-color: #e53e3e;
+      --warning-color: #d69e2e;
+      --info-color: #805ad5;
+      --dark-bg: #0f172a;
+      --card-bg: #1e293b;
+      --sidebar-bg: #0f172a;
+      --text-light: #f7fafc;
+      --text-muted: #a0aec0;
+      --border-color: #2d3748;
+      --hover-color: #2d3748;
+      --modal-bg: rgba(15, 23, 42, 0.95);
+      --ground-floor: #38a169;
+      --first-floor: #3182ce;
+      --fourth-floor: #e53e3e;
+      --fifth-floor: #ed8936;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text-light);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      padding: 25px 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      border-right: 1px solid var(--border-color);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .logo-container {
+      padding: 0 25px 25px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 25px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-light);
+    }
+
+    .logo-icon {
+      font-size: 28px;
+      color: var(--accent-color);
+      background: rgba(49, 130, 206, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .logo-subtext {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 0 15px;
+    }
+
+    .nav-item {
+      margin-bottom: 5px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 18px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background-color: var(--hover-color);
+      color: var(--text-light);
+    }
+
+    .nav-link.active {
+      background-color: var(--accent-color);
+      color: white;
+      box-shadow: 0 2px 8px rgba(49, 130, 206, 0.3);
+    }
+
+    .nav-icon {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      padding: 25px;
+      transition: all 0.3s ease;
+      min-height: 100vh;
+      width: calc(100% - 260px);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+
+    .menu-toggle:hover {
+      background-color: var(--hover-color);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-title-icon {
+      color: var(--accent-color);
+    }
+
+    .search-container {
+      position: relative;
+      flex-grow: 1;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 14px 20px 14px 45px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-light);
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+
+    .search-bar:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .user-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+      color: white;
+    }
+
+    .btn-info {
+      background-color: var(--info-color);
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    /* Report Image Styles */
+    .report-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background-color: var(--secondary-color);
+    }
+
+    .report-code {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      color: var(--accent-color);
+      background-color: rgba(49, 130, 206, 0.1);
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid rgba(49, 130, 206, 0.2);
+    }
+
+    /* Dashboard Sections */
+    .dashboard-section {
+      display: none;
+    }
+
+    .active-section {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 25px;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-color);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .stat-info h3 {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-light);
+      line-height: 1;
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Floor Badges */
+    .floor-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .floor-ground {
+      background-color: rgba(56, 161, 105, 0.2);
+      color: var(--ground-floor);
+      border: 1px solid rgba(56, 161, 105, 0.3);
+    }
+
+    .floor-first {
+      background-color: rgba(49, 130, 206, 0.2);
+      color: var(--first-floor);
+      border: 1px solid rgba(49, 130, 206, 0.3);
+    }
+
+    .floor-fourth {
+      background-color: rgba(229, 62, 62, 0.2);
+      color: var(--fourth-floor);
+      border: 1px solid rgba(229, 62, 62, 0.3);
+    }
+
+    .floor-fifth {
+      background-color: rgba(237, 137, 54, 0.2);
+      color: var(--fifth-floor);
+      border: 1px solid rgba(237, 137, 54, 0.3);
+    }
+
+    /* Table Cards */
+    .table-card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 25px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 25px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon {
+      color: var(--accent-color);
+      font-size: 22px;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      width: 100%;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1000px;
+    }
+
+    .data-table th {
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--accent-color);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 16px;
+      text-align: left;
+      border-bottom: 2px solid var(--border-color);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .data-table tbody tr {
+      transition: background-color 0.2s;
+    }
+
+    .data-table tbody tr:hover {
+      background-color: rgba(49, 130, 206, 0.05);
+    }
+
+    /* Item Image */
+    .item-image {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s;
+      cursor: pointer;
+      background-color: var(--secondary-color);
+    }
+
+    .item-image:hover {
+      transform: scale(3);
+      z-index: 100;
+      position: relative;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      border-color: var(--accent-color);
+    }
+
+    .big-image-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--modal-bg);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .big-image-modal.active {
+      display: flex;
+    }
+
+    .big-image-content {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+      background-color: var(--card-bg);
+      padding: 20px;
+    }
+
+    .big-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .image-title {
+      margin-top: 15px;
+      text-align: center;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    /* Stock Badges */
+    .stock-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .stock-high {
+      background-color: rgba(56, 161, 105, 0.2);
+      color: var(--success-color);
+      border: 1px solid rgba(56, 161, 105, 0.3);
+    }
+
+    .stock-medium {
+      background-color: rgba(214, 158, 46, 0.2);
+      color: var(--warning-color);
+      border: 1px solid rgba(214, 158, 46, 0.3);
+    }
+
+    .stock-low {
+      background-color: rgba(229, 62, 62, 0.2);
+      color: var(--danger-color);
+      border: 1px solid rgba(229, 62, 62, 0.3);
+    }
+
+    .stock-out {
+      background-color: rgba(160, 174, 192, 0.2);
+      color: var(--text-muted);
+      border: 1px solid rgba(160, 174, 192, 0.3);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-light);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    /* Modals */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--modal-bg);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      width: 100%;
+      max-width: 800px;
+      border-radius: 12px;
+      padding: 30px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--danger-color);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-light);
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-light);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Image Upload Styles */
+    .image-upload-container {
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 25px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+    }
+
+    .image-upload-container:hover,
+    .image-upload-container.drag-over {
+      border-color: var(--accent-color);
+      background-color: rgba(49, 130, 206, 0.05);
+    }
+
+    .image-upload-icon {
+      font-size: 48px;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+    }
+
+    .image-upload-text {
+      color: var(--text-light);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .image-upload-subtext {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .image-upload-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: var(--accent-color);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .image-upload-button:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .image-preview-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .image-preview {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 2px solid var(--border-color);
+      margin-bottom: 15px;
+      background-color: var(--secondary-color);
+    }
+
+    .image-remove-btn {
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .image-remove-btn:hover {
+      background-color: #c53030;
+    }
+
+    .image-url-section {
+      margin-top: 15px;
+    }
+
+    .upload-progress {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: var(--border-color);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--accent-color);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      padding: 16px 24px;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      transform: translateX(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 400px;
+      border-left: 4px solid;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-success {
+      border-left-color: var(--success-color);
+    }
+
+    .toast-error {
+      border-left-color: var(--danger-color);
+    }
+
+    .toast-info {
+      border-left-color: var(--accent-color);
+    }
+
+    .toast-warning {
+      border-left-color: var(--warning-color);
+    }
+
+    .toast-icon {
+      font-size: 20px;
+    }
+
+    .toast-message {
+      flex: 1;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent-color);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Floor Filter */
+    .floor-filter {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .floor-filter-btn {
+      padding: 8px 16px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .floor-filter-btn:hover {
+      background-color: var(--hover-color);
+      color: var(--text-light);
+    }
+
+    .floor-filter-btn.active {
+      background-color: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+
+    /* Report Controls */
+    .report-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* Report Tabs */
+    .report-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .report-tab {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .report-tab:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-light);
+    }
+
+    .report-tab.active {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .report-content {
+      display: none;
+    }
+
+    .report-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* Print Styles */
+    @media print {
+      .app-container,
+      .main-content,
+      .table-card {
+        background-color: white !important;
+        color: black !important;
+      }
+      .sidebar,
+      .header,
+      .table-header,
+      .btn,
+      .action-buttons,
+      .nav-menu,
+      .search-container,
+      .user-actions,
+      .report-controls,
+      .form-actions,
+      .report-tabs {
+        display: none !important;
+      }
+      .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+      }
+      .table-card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+      }
+      .data-table {
+        color: black !important;
+        border: 1px solid #000 !important;
+      }
+      .data-table th,
+      .data-table td {
+        border: 1px solid #000 !important;
+        color: black !important;
+      }
+      .stat-card {
+        border: 1px solid #000 !important;
+        color: black !important;
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+      }
+      .menu-toggle {
+        display: block;
+      }
+      .table-card {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      .search-container {
+        max-width: 100%;
+        width: 100%;
+        order: 3;
+      }
+      .user-actions {
+        width: 100%;
+        justify-content: space-between;
+        order: 2;
+        gap: 8px;
+      }
+      .user-actions .btn {
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+        padding: 10px 16px;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+      .stat-card {
+        padding: 20px;
+      }
+      .stat-value {
+        font-size: 32px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 15px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .table-card {
+        padding: 15px;
+      }
+      .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+      .user-actions .btn {
+        padding: 8px 12px;
+      }
+      .modal-content {
+        padding: 20px;
+        margin: 10px;
+      }
+      .data-table th,
+      .data-table td {
+        padding: 12px 8px;
+        font-size: 13px;
+      }
+      .data-table td {
+        word-break: break-word;
+      }
+      .report-tabs {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .report-tab {
+        width: 100%;
+        text-align: center;
+      }
+      .section-title {
+        font-size: 18px;
+      }
+      .page-title {
+        font-size: 20px;
+      }
+      .stat-value {
+        font-size: 28px;
+      }
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .main-content {
+        padding: 12px;
+      }
+      .stat-value {
+        font-size: 24px;
+      }
+      .stat-card {
+        padding: 15px;
+      }
+      .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .table-actions {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .table-actions .btn,
+      .table-actions select,
+      .table-actions input {
+        flex: 1;
+        min-width: 120px;
+      }
+      .form-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .user-actions {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+      }
+      .user-actions .btn {
+        min-width: 120px;
+        white-space: nowrap;
+      }
+      .action-buttons {
+        justify-content: center;
+      }
+      .floor-filter {
+        justify-content: center;
+      }
+      .report-controls {
+        justify-content: center;
+      }
+      .modal-content {
+        padding: 15px;
+      }
+      .toast {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        max-width: none;
+      }
+      .item-image {
+        width: 50px;
+        height: 50px;
+      }
+      .item-image:hover {
+        transform: scale(2);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .page-title {
+        font-size: 18px;
+      }
+      .stats-grid {
+        gap: 10px;
+      }
+      .stat-card {
+        padding: 15px 12px;
+      }
+      .stat-value {
+        font-size: 20px;
+      }
+      .table-card {
+        padding: 12px;
+      }
+      .data-table th,
+      .data-table td {
+        padding: 8px 6px;
+        font-size: 12px;
+      }
+      .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+      .nav-link {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+      .logo-text {
+        font-size: 18px;
+      }
+      .logo-subtext {
+        font-size: 10px;
+      }
+      .user-actions {
+        gap: 6px;
+      }
+      .user-actions .btn {
+        min-width: 100px;
+        padding: 6px 8px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .user-actions {
+        flex-direction: column;
+        gap: 5px;
+      }
+      .user-actions .btn {
+        width: 100%;
+        min-width: auto;
+      }
+      .table-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .table-actions .btn,
+      .table-actions select,
+      .table-actions input {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+      .floor-filter-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .report-tab {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      .section-title {
+        font-size: 16px;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--dark-bg);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Touch-friendly improvements */
+    @media (hover: none) and (pointer: coarse) {
+      .btn,
+      .action-btn,
+      .floor-filter-btn,
+      .report-tab,
+      .nav-link {
+        min-height: 44px;
+        min-width: 44px;
+      }
+      .search-bar,
+      .form-control,
+      select.form-control {
+        font-size: 16px;
+        min-height: 44px;
+      }
+      .item-image:hover {
+        transform: none;
+      }
+      .action-buttons {
+        gap: 4px;
+      }
+      .action-btn {
+        width: 44px;
+        height: 44px;
+      }
+    }
+
+    /* Prevent text selection on mobile */
+    @media (max-width: 768px) {
+      .btn,
+      .action-btn,
+      .floor-filter-btn,
+      .report-tab {
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+      }
+    }
+
+    /* Offline indicator */
+    .offline-indicator {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: var(--warning-color);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 10001;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .offline-indicator.show {
+      display: flex;
+    }
+
+    /* Image optimization */
+    .lazy-image {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .lazy-image.loaded {
+      opacity: 1;
+    }
+
+    /* Export dropdown styles */
+    .export-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .export-options {
+      display: none;
+      position: absolute;
+      background-color: var(--card-bg);
+      min-width: 220px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      top: 100%;
+      right: 0;
+      margin-top: 5px;
+    }
+
+    .export-options button {
+      color: var(--text-light);
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+
+    .export-options button:hover {
+      background-color: var(--hover-color);
+    }
+
+    .export-options button:first-child {
+      border-radius: 6px 6px 0 0;
+    }
+
+    .export-options button:last-child {
+      border-radius: 0 0 6px 6px;
+    }
+    
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 23, 42, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent-color);
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      color: white;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="logo-container">
+        <div class="logo">
+          <i class="fas fa-warehouse logo-icon"></i>
+          <div>
+            <div class="logo-text">Outlet Stock</div>
+            <div class="logo-subtext">Management System</div>
+          </div>
+        </div>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="#" class="nav-link active" data-section="dashboard">
+            <i class="fas fa-tachometer-alt nav-icon"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-section="inventory">
+            <i class="fas fa-boxes nav-icon"></i>
+            <span>Inventory</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-section="transactions">
+            <i class="fas fa-exchange-alt nav-icon"></i>
+            <span>Transactions</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-section="reports">
+            <i class="fas fa-chart-pie nav-icon"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-section="settings">
+            <i class="fas fa-cog nav-icon"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="page-title">
+            <i class="fas fa-tachometer-alt page-title-icon"></i>
+            <span id="pageTitle">Dashboard</span>
+          </div>
+        </div>
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-bar" id="searchBar"
+            placeholder="Search items by name, category, or floor...">
+        </div>
+        <div class="user-actions">
+          <button class="btn btn-primary" id="addItemBtn">
+            <i class="fas fa-plus"></i>
+            <span>Add Item</span>
+          </button>
+          <button class="btn btn-success" onclick="showCreateGRNModal()">
+            <i class="fas fa-arrow-circle-down"></i>
+            <span>Create GRN</span>
+          </button>
+          <button class="btn btn-warning" onclick="showCreateDCModal()">
+            <i class="fas fa-arrow-circle-up"></i>
+            <span>Create DC</span>
+          </button>
+          <div class="export-dropdown">
+            <button class="btn btn-info" id="exportBtn">
+              <i class="fas fa-file-export"></i>
+              <span>Export</span>
+            </button>
+            <div class="export-options">
+              <button onclick="exportSimpleExcel()">Excel (Simple)</button>
+              <button onclick="exportData()">Excel (Full Data)</button>
+              <button onclick="exportDataWithImages('all')">HTML (All Items)</button>
+              <!-- Floor-wise HTML exports -->
+              <button onclick="exportDataWithImages('ground')">HTML: Ground Floor</button>
+              <button onclick="exportDataWithImages('first')">HTML: 1st Floor</button>
+              <button onclick="exportDataWithImages('fourth')">HTML: 4th Floor</button>
+              <button onclick="exportDataWithImages('fifth')">HTML: 5th Floor</button>
+              <button onclick="exportFullReport()">Full Report (ZIP)</button>
+              <button onclick="exportCurrentReport()">Current Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offline Indicator -->
+      <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi-slash"></i>
+        <span>Working Offline</span>
+      </div>
+
+      <!-- Firebase Status -->
+      <div id="firebaseStatus" style="padding: 10px; margin-bottom: 20px; border-radius: 5px; display: none;">
+      </div>
+
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="dashboard-section active-section">
+        <!-- Floor Summary -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3 class="section-title">
+              <i class="fas fa-building section-icon"></i>
+              Floor-wise Stock Summary
+            </h3>
+            <div class="table-actions">
+              <button class="btn btn-info" onclick="exportFloorSummary()">
+                <i class="fas fa-download"></i>
+                Export Summary
+              </button>
+            </div>
+          </div>
+          <div class="stats-grid" id="floorStats">
+            <!-- Floor stats will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="table-card">
+          <div class="table-header">
+            <h3 class="section-title">
+              <i class="fas fa-history section-icon"></i>
+              Recent Activity
+            </h3>
+            <div class="table-actions">
+              <button class="btn btn-info" onclick="exportRecentActivity()">
+                <i class="fas fa-download"></i>
+                Export Activity
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="recentActivityTable">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Type</th>
+                  <th>Item</th>
+                  <th>Floor</th>
+                  <th>Quantity</th>
+                  <th>Party</th>
+                </tr>
+              </thead>
+              <tbody id="recentActivityBody">
+                <!-- Recent activity will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inventory Section -->
+      <section id="inventory" class="dashboard-section">
+        <div class="table-card">
+          <div class="table-header">
+            <h3 class="section-title">
+              <i class="fas fa-boxes section-icon"></i>
+              Inventory Management
+            </h3>
+            <div class="table-actions">
+              <select class="form-control" id="categoryFilter" style="width: 150px;">
+                <option value="">All Categories</option>
+                <option value="Chair">Chair</option>
+                <option value="Table">Table</option>
+                <option value="Sofa">Sofa</option>
+                <option value="Cabinet">Cabinet</option>
+                <option value="Bed">Bed</option>
+                <option value="Office">Office</option>
+              </select>
+              <button class="btn btn-success" id="addInventoryBtn">
+                <i class="fas fa-plus"></i>
+                Add Item
+              </button>
+            </div>
+          </div>
+
+          <!-- Floor Filter -->
+          <div class="floor-filter" id="floorFilter">
+            <button class="floor-filter-btn active" data-floor="all">All Floors</button>
+            <button class="floor-filter-btn" data-floor="ground">Ground Floor</button>
+            <button class="floor-filter-btn" data-floor="first">1st Floor</button>
+            <button class="floor-filter-btn" data-floor="fourth">4th Floor</button>
+            <button class="floor-filter-btn" data-floor="fifth">5th Floor</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="inventoryTable">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Item Details</th>
+                  <th>Category</th>
+                  <th>Floor</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody">
+                <!-- Inventory data will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transactions Section -->
+      <section id="transactions" class="dashboard-section">
+        <div class="table-card">
+          <div class="table-header">
+            <h3 class="section-title">
+              <i class="fas fa-exchange-alt section-icon"></i>
+              Transaction Logs
+            </h3>
+            <div class="table-actions">
+              <select class="form-control" id="transTypeFilter" style="width: 120px;">
+                <option value="all">All Types</option>
+                <option value="GRN">GRN</option>
+                <option value="DC">DC</option>
+              </select>
+              <input type="date" class="form-control" id="transDateFilter" style="width: 150px;">
+              <button class="btn btn-info" onclick="exportTransactions()">
+                <i class="fas fa-download"></i>
+                Export
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="transactionsTable">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Type</th>
+                  <th>Document No</th>
+                  <th>Item</th>
+                  <th>Floor</th>
+                  <th>Quantity</th>
+                  <th>Party</th>
+                  <th>User</th>
+                </tr>
+              </thead>
+              <tbody id="transactionsTableBody">
+                <!-- Transactions will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reports Section -->
+      <section id="reports" class="dashboard-section">
+        <div class="table-card">
+          <div class="table-header">
+            <h3 class="section-title">
+              <i class="fas fa-chart-pie section-icon"></i>
+              Reports Dashboard
+            </h3>
+            <div class="table-actions">
+              <button class="btn btn-info" onclick="exportCurrentReport()">
+                <i class="fas fa-file-excel"></i>
+                Export Excel
+              </button>
+              <button class="btn btn-warning" onclick="printCurrentReport()">
+                <i class="fas fa-print"></i>
+                Print
+              </button>
+              <button class="btn btn-success" onclick="exportFullReport()">
+                <i class="fas fa-file-archive"></i>
+                Full Report
+              </button>
+            </div>
+          </div>
+
+          <!-- Report Tabs -->
+          <div class="report-tabs">
+            <button class="report-tab active" data-report="stock-reports">Stock Reports</button>
+            <button class="report-tab" data-report="grn-reports">GRN Reports</button>
+            <button class="report-tab" data-report="dc-reports">DC Reports</button>
+          </div>
+
+          <!-- Stock Reports Content -->
+          <div id="stock-reports" class="report-content active">
+            <div class="report-controls">
+              <button class="btn btn-sm btn-info" onclick="generateGroundFloorReport()">
+                <i class="fas fa-building"></i>
+                Ground Floor
+              </button>
+              <button class="btn btn-sm btn-info" onclick="generateFirstFloorReport()">
+                <i class="fas fa-building"></i>
+                1st Floor
+              </button>
+              <button class="btn btn-sm btn-info" onclick="generateFourthFloorReport()">
+                <i class="fas fa-building"></i>
+                4th Floor
+              </button>
+              <button class="btn btn-sm btn-info" onclick="generateFifthFloorReport()">
+                <i class="fas fa-building"></i>
+                5th Floor
+              </button>
+              <button class="btn btn-sm btn-success" onclick="generateCategoryWiseReport()">
+                <i class="fas fa-list"></i>
+                Category
+              </button>
+            </div>
+
+            <!-- Report Filters -->
+            <div style="margin-bottom: 25px;">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Report Type</label>
+                  <select class="form-control" id="reportType">
+                    <option value="stock_summary">Stock Summary</option>
+                    <option value="floor_wise">Floor-wise Report</option>
+                    <option value="category_wise">Category-wise Report</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Date Range</label>
+                  <div style="display: flex; gap: 10px;">
+                    <input type="date" class="form-control" id="reportStartDate">
+                    <input type="date" class="form-control" id="reportEndDate">
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top: 15px; text-align: center;">
+                <button class="btn btn-primary" onclick="generateReport()">
+                  <i class="fas fa-sync-alt"></i>
+                  Generate Report
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table" id="reportTable">
+                <thead id="reportTableHead">
+                  <!-- Report headers will be loaded here -->
+                </thead>
+                <tbody id="reportTableBody">
+                  <!-- Report data will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- GRN Reports Content -->
+          <div id="grn-reports" class="report-content">
+            <!-- GRN Report Filters -->
+            <div style="margin-bottom: 25px;">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Date Range</label>
+                  <div style="display: flex; gap: 10px;">
+                    <input type="date" class="form-control" id="grnReportStartDate">
+                    <input type="date" class="form-control" id="grnReportEndDate">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Supplier Filter</label>
+                  <input type="text" class="form-control" id="grnSupplierFilter"
+                    placeholder="Filter by supplier name...">
+                </div>
+                <div class="form-group">
+                  <label>Floor Filter</label>
+                  <select class="form-control" id="grnFloorFilter">
+                    <option value="all">All Floors</option>
+                    <option value="ground">Ground Floor</option>
+                    <option value="first">1st Floor</option>
+                    <option value="fourth">4th Floor</option>
+                    <option value="fifth">5th Floor</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Item Filter</label>
+                  <input type="text" class="form-control" id="grnItemFilter"
+                    placeholder="Filter by item code or name...">
+                </div>
+              </div>
+              <div style="margin-top: 15px; text-align: center;">
+                <button class="btn btn-primary" onclick="generateGRNReport()">
+                  <i class="fas fa-sync-alt"></i>
+                  Generate GRN Report
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table" id="grnReportTable">
+                <thead id="grnReportTableHead">
+                  <tr>
+                    <th>GRN No</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Item Details</th>
+                    <th>Floor</th>
+                    <th>Quantity</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="grnReportTableBody">
+                  <!-- GRN report data will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- DC Reports Content -->
+          <div id="dc-reports" class="report-content">
+            <!-- DC Report Filters -->
+            <div style="margin-bottom: 25px;">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Date Range</label>
+                  <div style="display: flex; gap: 10px;">
+                    <input type="date" class="form-control" id="dcReportStartDate">
+                    <input type="date" class="form-control" id="dcReportEndDate">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Customer Filter</label>
+                  <input type="text" class="form-control" id="dcCustomerFilter"
+                    placeholder="Filter by customer name...">
+                </div>
+                <div class="form-group">
+                  <label>Floor Filter</label>
+                  <select class="form-control" id="dcFloorFilter">
+                    <option value="all">All Floors</option>
+                    <option value="ground">Ground Floor</option>
+                    <option value="first">1st Floor</option>
+                    <option value="fourth">4th Floor</option>
+                    <option value="fifth">5th Floor</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Item Filter</label>
+                  <input type="text" class="form-control" id="dcItemFilter"
+                    placeholder="Filter by item code or name...">
+                </div>
+              </div>
+              <div style="margin-top: 15px; text-align: center;">
+                <button class="btn btn-primary" onclick="generateDCReport()">
+                  <i class="fas fa-sync-alt"></i>
+                  Generate DC Report
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table" id="dcReportTable">
+                <thead id="dcReportTableHead">
+                  <tr>
+                    <th>DC No</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Item Details</th>
+                    <th>Floor</th>
+                    <th>Quantity</th>
+                    <th>Dispatch Image</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="dcReportTableBody">
+                  <!-- DC report data will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Section -->
+      <section id="settings" class="dashboard-section">
+        <div class="table-card">
+          <div class="table-header">
+            <h3 class="section-title">
+              <i class="fas fa-cog section-icon"></i>
+              System Settings
+            </h3>
+          </div>
+
+          <div class="form-grid" style="margin-top: 20px;">
+            <div class="form-group">
+              <label>Company Name</label>
+              <input type="text" class="form-control" id="companyName" value="Outlet Stock Management">
+            </div>
+            <div class="form-group">
+              <label>GRN Prefix</label>
+              <input type="text" class="form-control" id="grnPrefix" value="GRN">
+            </div>
+            <div class="form-group">
+              <label>DC Prefix</label>
+              <input type="text" class="form-control" id="dcPrefix" value="DC">
+            </div>
+            <div class="form-group full-width">
+              <label>Default Item Image</label>
+              <input type="text" class="form-control" id="defaultImage"
+                value="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMxYTM2NWQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+SXRlbSBJbWFnZTwvdGV4dD48L3N2Zz4=">
+              <small style="color: var(--text-muted);">Base64 encoded SVG image (works offline)</small>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-danger" id="resetSettingsBtn">
+              <i class="fas fa-redo"></i>
+              Reset
+            </button>
+            <button class="btn btn-success" id="saveSettingsBtn">
+              <i class="fas fa-save"></i>
+              Save Settings
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Big Image Modal -->
+  <div class="big-image-modal" id="bigImageModal">
+    <div class="big-image-content">
+      <img src="" alt="Item Image" class="big-image" id="bigImage">
+      <div class="image-title" id="bigImageTitle"></div>
+    </div>
+  </div>
+
+  <!-- Add Item Modal with Image Drop Zone -->
+  <div class="modal" id="addItemModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas fa-plus-circle"></i>
+          Add New Item
+        </h3>
+        <button class="modal-close" id="closeAddItemModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="addItemForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="itemCode">Item Code *</label>
+            <input type="text" id="itemCode" class="form-control" required placeholder="e.g., CHAIR-001"
+              oninput="generateCodeSuggestions()">
+            <div id="codeSuggestions" style="margin-top: 5px; font-size: 12px; color: var(--text-muted);">
+              <small>Suggested codes will appear here</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="itemName">Item Name *</label>
+            <input type="text" id="itemName" class="form-control" required
+              placeholder="e.g., Executive Office Chair" oninput="generateCodeSuggestions()">
+          </div>
+          <div class="form-group">
+            <label for="itemCategory">Category *</label>
+            <select id="itemCategory" class="form-control" required onchange="generateCodeSuggestions()">
+              <option value="">Select Category</option>
+              <option value="Chair">Chair</option>
+              <option value="Table">Table</option>
+              <option value="Sofa">Sofa</option>
+              <option value="Cabinet">Cabinet</option>
+              <option value="Bed">Bed</option>
+              <option value="Office">Office Furniture</option>
+              <option value="Dining">Dining Furniture</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="itemFloor">Floor *</label>
+            <select id="itemFloor" class="form-control" required>
+              <option value="">Select Floor</option>
+              <option value="ground">Ground Floor</option>
+              <option value="first">1st Floor</option>
+              <option value="fourth">4th Floor</option>
+              <option value="fifth">5th Floor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="itemStock">Initial Stock *</label>
+            <input type="number" id="itemStock" class="form-control" required min="0" value="0">
+          </div>
+          <div class="form-group full-width">
+            <label for="itemImage">Item Image</label>
+            
+            <!-- Image Upload Section -->
+            <div class="image-upload-container" id="imageDropZone"
+                 onclick="document.getElementById('imageInput').click()"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)"
+                 ondrop="handleImageDrop(event)">
+              <i class="fas fa-cloud-upload-alt image-upload-icon"></i>
+              <p class="image-upload-text">Drag & drop your image here</p>
+              <p class="image-upload-subtext">or click to browse files (Max: 5MB, JPG/PNG/WebP)</p>
+              <div class="image-upload-button">
+                Browse Images
+              </div>
+              <input type="file" id="imageInput" accept="image/jpeg,image/png,image/jpg,image/webp" 
+                     style="display: none;" onchange="handleImageSelect(event)">
+            </div>
+            
+            <!-- Upload Progress -->
+            <div class="upload-progress" id="uploadProgress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="progress-text" id="progressText">Uploading...</div>
+            </div>
+            
+            <!-- Image Preview -->
+            <div class="image-preview-container" id="imagePreviewContainer">
+              <img id="imagePreview" class="image-preview" src="" alt="Image Preview">
+              <button type="button" class="image-remove-btn" onclick="removeUploadedImage()">
+                <i class="fas fa-trash"></i> Remove Image
+              </button>
+            </div>
+            
+            <!-- Image URL Input -->
+            <div class="image-url-section" id="imageUrlSection">
+              <label for="itemImageUrl">Or enter image URL</label>
+              <input type="text" id="itemImageUrl" class="form-control"
+                     placeholder="https://example.com/image.jpg">
+            </div>
+            
+            <!-- Toggle between upload and URL -->
+            <div style="margin-top: 10px; text-align: center;">
+              <button type="button" class="btn btn-sm btn-info" onclick="toggleImageSource()" id="toggleImageSourceBtn">
+                <i class="fas fa-exchange-alt"></i> Switch to URL Input
+              </button>
+            </div>
+            
+            <!-- Local storage info -->
+            <div id="localStorageInfo" style="margin-top: 10px; font-size: 12px; color: var(--text-muted); display: none;">
+              <i class="fas fa-info-circle"></i> Image saved locally
+            </div>
+          </div>
+          <div class="form-group full-width">
+            <label for="itemDescription">Description</label>
+            <textarea id="itemDescription" class="form-control" rows="3"
+              placeholder="Item description and specifications..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" id="cancelAddItem">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-success" id="saveItemBtn">
+            <i class="fas fa-save"></i>
+            Save Item
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create GRN Modal -->
+  <div class="modal" id="createGRNModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas fa-arrow-circle-down"></i>
+          Create Goods Received Note
+        </h3>
+        <button class="modal-close" id="closeGRNModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="createGRNForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="grnSupplier">Supplier Name *</label>
+            <input type="text" id="grnSupplier" class="form-control" required
+              placeholder="Enter supplier name">
+          </div>
+          <div class="form-group">
+            <label for="grnDate">Date *</label>
+            <input type="date" id="grnDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="grnItem">Select Item *</label>
+            <div style="position: relative;">
+              <div class="search-container" style="margin-bottom: 10px;">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-bar" id="grnItemSearch"
+                  placeholder="Search items by code, name, or category..."
+                  style="padding: 8px 16px 8px 35px; font-size: 14px;">
+              </div>
+              <select id="grnItem" class="form-control" required style="height: 150px;"
+                onchange="updateGRNItemDetails()">
+                <option value="">Select Item</option>
+                <!-- Items will be populated dynamically -->
+              </select>
+              <div id="grnSelectedItemInfo" style="margin-top: 10px; padding: 10px; 
+                   background: rgba(0,0,0,0.1); border-radius: 5px; display: none;">
+                <small>
+                  <strong>Selected:</strong>
+                  <span id="grnSelectedItemText">No item selected</span>
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="grnFloor">Floor *</label>
+            <select id="grnFloor" class="form-control" required>
+              <option value="">Select Floor</option>
+              <option value="ground">Ground Floor</option>
+              <option value="first">1st Floor</option>
+              <option value="fourth">4th Floor</option>
+              <option value="fifth">5th Floor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="grnQuantity">Quantity *</label>
+            <input type="number" id="grnQuantity" class="form-control" required min="1" value="1">
+          </div>
+          <div class="form-group full-width">
+            <label for="grnNotes">Notes</label>
+            <textarea id="grnNotes" class="form-control" rows="2"
+              placeholder="Additional notes..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" id="cancelGRN">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-check"></i>
+            Create GRN
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create DC Modal -->
+  <div class="modal" id="createDCModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas fa-arrow-circle-up"></i>
+          Create Delivery Challan
+        </h3>
+        <button class="modal-close" id="closeDCModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="createDCForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="dcCustomer">Customer Name *</label>
+            <input type="text" id="dcCustomer" class="form-control" required
+              placeholder="Enter customer name">
+          </div>
+          <div class="form-group">
+            <label for="dcDate">Date *</label>
+            <input type="date" id="dcDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="dcItem">Select Item *</label>
+            <div style="position: relative;">
+              <div class="search-container" style="margin-bottom: 10px;">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-bar" id="dcItemSearch"
+                  placeholder="Search items by code, name, or category..."
+                  style="padding: 8px 16px 8px 35px; font-size: 14px;">
+              </div>
+              <select id="dcItem" class="form-control" required style="height: 150px;"
+                onchange="updateDCItemDetails()">
+                <option value="">Select Item</option>
+                <!-- Items will be populated dynamically -->
+              </select>
+              <div id="dcSelectedItemInfo" style="margin-top: 10px; padding: 10px; 
+                   background: rgba(0,0,0,0.1); border-radius: 5px; display: none;">
+                <small>
+                  <strong>Selected:</strong>
+                  <span id="dcSelectedItemText">No item selected</span><br>
+                  <strong>Available Stock:</strong>
+                  <span id="dcAvailableStock">0</span>
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="dcFloor">Floor *</label>
+            <select id="dcFloor" class="form-control" required>
+              <option value="">Select Floor</option>
+              <option value="ground">Ground Floor</option>
+              <option value="first">1st Floor</option>
+              <option value="fourth">4th Floor</option>
+              <option value="fifth">5th Floor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="dcQuantity">Quantity *</label>
+            <input type="number" id="dcQuantity" class="form-control" required min="1" value="1">
+          </div>
+          <div class="form-group full-width">
+            <label for="dcDispatchImage">Dispatch Item Image</label>
+            <div class="image-upload-container" id="dcImageDropZone"
+              onclick="document.getElementById('dcImageInput').click()" 
+              ondragover="handleDCDragOver(event)"
+              ondragleave="handleDCDragLeave(event)"
+              ondrop="handleDCDragDrop(event)">
+              <i class="fas fa-cloud-upload-alt image-upload-icon"></i>
+              <p class="image-upload-text">Click to upload or drag & drop</p>
+              <p class="image-upload-subtext">Upload image of packed/dispatched item (Max: 5MB)</p>
+              <input type="file" id="dcImageInput" accept="image/jpeg,image/png,image/jpg,image/webp" 
+                     style="display: none;" onchange="handleDCImageSelect(event)">
+            </div>
+            
+            <!-- DC Upload Progress -->
+            <div class="upload-progress" id="dcUploadProgress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="dcProgressFill"></div>
+              </div>
+              <div class="progress-text" id="dcProgressText">Uploading...</div>
+            </div>
+            
+            <!-- DC Image Preview -->
+            <div class="image-preview-container" id="dcImagePreview">
+              <img id="dcImagePreviewImg" class="image-preview" src="" alt="Dispatch Image Preview">
+              <button type="button" class="image-remove-btn" onclick="removeDCImage()">
+                <i class="fas fa-trash"></i> Remove Image
+              </button>
+            </div>
+            
+            <!-- DC Image URL Input -->
+            <div class="image-url-section" id="dcImageUrlSection">
+              <label for="dcImageUrl">Or enter image URL</label>
+              <input type="text" id="dcImageUrl" class="form-control"
+                placeholder="https://example.com/image.jpg">
+            </div>
+            
+            <!-- Toggle between upload and URL -->
+            <div style="margin-top: 10px; text-align: center;">
+              <button type="button" class="btn btn-sm btn-info" onclick="toggleDCImageSource()" id="toggleDCImageSourceBtn">
+                <i class="fas fa-link"></i> Enter URL instead
+              </button>
+            </div>
+          </div>
+          <div class="form-group full-width">
+            <label for="dcNotes">Notes</label>
+            <textarea id="dcNotes" class="form-control" rows="2"
+              placeholder="Additional notes about dispatch..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" id="cancelDC">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-warning">
+            <i class="fas fa-check"></i>
+            Create DC
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle toast-icon" id="toastIcon"></i>
+    <span class="toast-message" id="toastMessage"></span>
+    <button class="toast-close" id="toastClose">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div style="text-align: center;">
+      <div class="loading-spinner"></div>
+      <div class="loading-text" id="loadingText">Processing...</div>
+    </div>
+  </div>
+
+  <!-- Main Application Script -->
+  <script>
+    // Firebase Configuration
+  const firebaseConfig = {
+  apiKey: "AIzaSyAV5HqOYOHC_kOMXXEWL5L4j0MfzKzQYHE",
+  authDomain: "global-stock-data.firebaseapp.com",
+  databaseURL: "https://global-stock-data-default-rtdb.firebaseio.com",
+  projectId: "global-stock-data",
+  storageBucket: "global-stock-data.firebasestorage.app",
+  messagingSenderId: "206870283444",
+  appId: "1:206870283444:web:bb712741e81384d8ff43e1",
+  measurementId: "G-8TSHJNMKL8"
+};
+    
+    // Application Configuration
+    const config = {
+      defaultImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMxYTM2NWQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+SXRlbSBJbWFnZTwvdGV4dD48L3N2Zz4=',
+      floors: [
+        { id: 'ground', name: 'Ground Floor', color: 'var(--ground-floor)' },
+        { id: 'first', name: '1st Floor', color: 'var(--first-floor)' },
+        { id: 'fourth', name: '4th Floor', color: 'var(--fourth-floor)' },
+        { id: 'fifth', name: '5th Floor', color: 'var(--fifth-floor)' }
+      ]
+    };
+
+    // Firebase Initialization - WITH PERMISSIONS FIX
+    let db, storage;
+    let isOnline = true;
+    let firebaseInitialized = false;
+
+    try {
+      // Check if Firebase is already initialized
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      
+      // Initialize Firestore
+      db = firebase.firestore();
+      storage = firebase.storage();
+      
+      // Test Firebase connection with timeout
+      setTimeout(() => {
+        if (firebaseInitialized) {
+          console.log("Firebase initialized successfully");
+          const statusDiv = document.getElementById('firebaseStatus');
+          statusDiv.style.display = 'block';
+          statusDiv.style.backgroundColor = '#38a169';
+          statusDiv.textContent = '✓ Connected to Firebase';
+          statusDiv.style.color = 'white';
+        }
+      }, 1000);
+      
+      firebaseInitialized = true;
+
+    } catch (error) {
+      console.error("Firebase initialization error:", error);
+      firebaseInitialized = false;
+      const statusDiv = document.getElementById('firebaseStatus');
+      statusDiv.style.display = 'block';
+      statusDiv.style.backgroundColor = '#e53e3e';
+      statusDiv.textContent = '✗ Firebase connection failed. Using local storage.';
+      statusDiv.style.color = 'white';
+      isOnline = false;
+      document.getElementById('offlineIndicator').classList.add('show');
+    }
+
+    // Application State
+    let inventory = [];
+    let grnRecords = [];
+    let dcRecords = [];
+    let transactions = [];
+    let currentFloorFilter = 'all';
+    let currentReportData = [];
+    let currentReportType = '';
+    let currentReportTitle = '';
+    let currentReportTab = 'stock-reports';
+    let settings = {
+      companyName: 'Outlet Stock Management',
+      grnPrefix: 'GRN',
+      dcPrefix: 'DC',
+      defaultImage: config.defaultImage
+    };
+    
+    // Image upload state
+    let uploadedImageUrl = '';
+    let uploadedDCImageUrl = '';
+    let isUsingUrlForItem = false;
+    let isUsingUrlForDC = false;
+    let currentEditItemId = null;
+
+    // DOM Elements
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menuToggle');
+    const searchBar = document.getElementById('searchBar');
+    const sections = document.querySelectorAll('.dashboard-section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const pageTitle = document.getElementById('pageTitle');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toastMessage');
+    const toastIcon = document.getElementById('toastIcon');
+    const toastClose = document.getElementById('toastClose');
+    const bigImageModal = document.getElementById('bigImageModal');
+    const bigImage = document.getElementById('bigImage');
+    const bigImageTitle = document.getElementById('bigImageTitle');
+    const addItemModal = document.getElementById('addItemModal');
+    const closeAddItemModal = document.getElementById('closeAddItemModal');
+    const cancelAddItem = document.getElementById('cancelAddItem');
+    const addItemForm = document.getElementById('addItemForm');
+    const addItemBtn = document.getElementById('addItemBtn');
+    const addInventoryBtn = document.getElementById('addInventoryBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const floorFilter = document.getElementById('floorFilter');
+    const inventoryTableBody = document.getElementById('inventoryTableBody');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const createGRNModal = document.getElementById('createGRNModal');
+    const closeGRNModal = document.getElementById('closeGRNModal');
+    const cancelGRN = document.getElementById('cancelGRN');
+    const createGRNForm = document.getElementById('createGRNForm');
+    const createDCModal = document.getElementById('createDCModal');
+    const closeDCModal = document.getElementById('closeDCModal');
+    const cancelDC = document.getElementById('cancelDC');
+    const createDCForm = document.getElementById('createDCForm');
+    const floorStats = document.getElementById('floorStats');
+    const recentActivityBody = document.getElementById('recentActivityBody');
+    const transactionsTableBody = document.getElementById('transactionsTableBody');
+    const transTypeFilter = document.getElementById('transTypeFilter');
+    const transDateFilter = document.getElementById('transDateFilter');
+    const reportTableHead = document.getElementById('reportTableHead');
+    const reportTableBody = document.getElementById('reportTableBody');
+    const reportType = document.getElementById('reportType');
+    const reportStartDate = document.getElementById('reportStartDate');
+    const reportEndDate = document.getElementById('reportEndDate');
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+    const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+    const reportTabs = document.querySelectorAll('.report-tab');
+    const reportContents = document.querySelectorAll('.report-content');
+    const saveItemBtn = document.getElementById('saveItemBtn');
+    const offlineIndicator = document.getElementById('offlineIndicator');
+    
+    // Image upload elements
+    const imageDropZone = document.getElementById('imageDropZone');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    const imagePreview = document.getElementById('imagePreview');
+    const itemImageUrl = document.getElementById('itemImageUrl');
+    const imageUrlSection = document.getElementById('imageUrlSection');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const toggleImageSourceBtn = document.getElementById('toggleImageSourceBtn');
+    const localStorageInfo = document.getElementById('localStorageInfo');
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function () {
+      initApp();
+      setupEventListeners();
+      // Load data from localStorage first, then try Firebase
+      loadFromLocalStorage();
+      renderInventoryTable();
+      updateDashboard();
+      
+      // Try to load from Firebase in background
+      setTimeout(() => {
+        loadDataFromFirebase();
+      }, 1000);
+      
+      // Monitor online/offline status
+      window.addEventListener('online', handleOnlineStatus);
+      window.addEventListener('offline', handleOfflineStatus);
+      
+      // Check initial status
+      if (!navigator.onLine) {
+        handleOfflineStatus();
+      }
+    });
+
+    async function initApp() {
+      // Set current date for forms
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('grnDate').value = today;
+      document.getElementById('dcDate').value = today;
+      document.getElementById('reportStartDate').value = today;
+      document.getElementById('reportEndDate').value = today;
+      
+      // Set default dates for GRN/DC reports
+      const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 2).toISOString().split('T')[0];
+      document.getElementById('grnReportStartDate').value = firstDayOfMonth;
+      document.getElementById('grnReportEndDate').value = today;
+      document.getElementById('dcReportStartDate').value = firstDayOfMonth;
+      document.getElementById('dcReportEndDate').value = today;
+      
+      if (transDateFilter) transDateFilter.value = today;
+
+      // Load settings from localStorage
+      loadSettings();
+
+      // Initialize floor filter
+      initFloorFilter();
+
+      // Initialize report tabs
+      initReportTabs();
+      
+      // Hide image preview and URL input initially
+      imagePreviewContainer.style.display = 'none';
+      imageUrlSection.style.display = 'none';
+      
+      // Hide DC image preview initially
+      document.getElementById('dcImagePreview').style.display = 'none';
+      document.getElementById('dcImageUrlSection').style.display = 'none';
+      document.getElementById('dcUploadProgress').style.display = 'none';
+    }
+
+    function handleOnlineStatus() {
+      console.log("Network is back online");
+      isOnline = true;
+      offlineIndicator.classList.remove('show');
+      showToast('Back online! Syncing data...', 'success');
+      // Try to sync with Firebase
+      setTimeout(() => {
+        loadDataFromFirebase();
+      }, 500);
+    }
+
+    function handleOfflineStatus() {
+      console.log("Network is offline");
+      isOnline = false;
+      offlineIndicator.classList.add('show');
+      showToast('You are offline. Working in local mode.', 'warning');
+    }
+    
+    // FIXED: Firebase Data Loading with Better Error Handling
+    async function loadDataFromFirebase() {
+      try {
+        // Check if Firebase is properly initialized
+        if (!firebaseInitialized || !db || !isOnline) {
+          console.log("Firebase not available, using local storage only");
+          return;
+        }
+
+        console.log("Trying to load data from Firebase...");
+        
+        // Set a timeout for Firebase operations
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Firebase timeout')), 3000)
+        );
+
+        // Try to load inventory
+        const inventoryPromise = db.collection('inventory').get();
+        const inventoryResult = await Promise.race([inventoryPromise, timeoutPromise]);
+        
+        // If we get here, Firebase worked
+        inventory = [];
+        inventoryResult.forEach(doc => {
+          const data = doc.data();
+          // Ensure image field exists
+          if (!data.image) {
+            data.image = settings.defaultImage;
+          }
+          inventory.push({
+            id: doc.id,
+            ...data
+          });
+        });
+
+        // Try to load GRN records
+        try {
+          const grnSnapshot = await db.collection('grn').get();
+          grnRecords = [];
+          grnSnapshot.forEach(doc => {
+            grnRecords.push({
+              id: doc.id,
+              ...doc.data()
+            });
+          });
+        } catch (grnError) {
+          console.warn("Could not load GRN records from Firebase:", grnError);
+        }
+
+        // Try to load DC records
+        try {
+          const dcSnapshot = await db.collection('dc').get();
+          dcRecords = [];
+          dcSnapshot.forEach(doc => {
+            dcRecords.push({
+              id: doc.id,
+              ...doc.data()
+            });
+          });
+        } catch (dcError) {
+          console.warn("Could not load DC records from Firebase:", dcError);
+        }
+
+        // Update transactions
+        updateTransactions();
+
+        // Update UI
+        renderInventoryTable();
+        updateDashboard();
+
+        console.log("Data loaded successfully from Firebase");
+        showToast("Data synced from Firebase", "success");
+        
+        // Save to localStorage as backup
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        localStorage.setItem('grnRecords', JSON.stringify(grnRecords));
+        localStorage.setItem('dcRecords', JSON.stringify(dcRecords));
+        localStorage.setItem('lastSync', new Date().toISOString());
+        
+      } catch (error) {
+        console.log("Firebase load failed, using local data:", error.message);
+        // Don't show error to user - just use local data
+        // The data is already loaded from localStorage on startup
+      }
+    }
+    
+    function loadFromLocalStorage() {
+      // Try to load from localStorage
+      const localInventory = localStorage.getItem('inventory');
+      const localGRN = localStorage.getItem('grnRecords');
+      const localDC = localStorage.getItem('dcRecords');
+      
+      if (localInventory) {
+        try {
+          inventory = JSON.parse(localInventory);
+          // Add default image to items without one
+          inventory.forEach(item => {
+            if (!item.image) {
+              item.image = settings.defaultImage;
+            }
+          });
+          console.log("Loaded inventory from localStorage:", inventory.length, "items");
+        } catch (e) {
+          console.error("Error parsing local inventory:", e);
+          loadSampleData();
+        }
+      } else {
+        loadSampleData();
+      }
+      
+      if (localGRN) {
+        try {
+          grnRecords = JSON.parse(localGRN);
+        } catch (e) {
+          console.error("Error parsing local GRN:", e);
+          grnRecords = [];
+        }
+      }
+      
+      if (localDC) {
+        try {
+          dcRecords = JSON.parse(localDC);
+        } catch (e) {
+          console.error("Error parsing local DC:", e);
+          dcRecords = [];
+        }
+      }
+      
+      updateTransactions();
+    }
+
+    function loadSampleData() {
+      // Sample inventory data with images
+      inventory = [
+        {
+          id: '1',
+          code: 'CHR-001',
+          name: 'Executive Office Chair',
+          category: 'Chair',
+          floor: 'ground',
+          stock: 25,
+          image: settings.defaultImage,
+          description: 'Ergonomic office chair with lumbar support',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          code: 'TBL-001',
+          name: 'Conference Table',
+          category: 'Table',
+          floor: 'first',
+          stock: 8,
+          image: settings.defaultImage,
+          description: 'Large conference table for 12 people',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: '3',
+          code: 'SOFA-001',
+          name: 'Leather Sofa Set',
+          category: 'Sofa',
+          floor: 'fourth',
+          stock: 5,
+          image: settings.defaultImage,
+          description: '3-seater leather sofa with 2 armchairs',
+          createdAt: new Date().toISOString()
+        }
+      ];
+
+      // Save to localStorage
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      localStorage.setItem('grnRecords', JSON.stringify([]));
+      localStorage.setItem('dcRecords', JSON.stringify([]));
+      console.log("Loaded sample data");
+    }
+
+    // FIXED: Save to localStorage first, then try Firebase
+    async function saveInventoryToFirebase() {
+      // Always save to localStorage first
+     // Remove image data before saving to localStorage
+const inventoryWithoutImages = inventory.map(item => {
+  const { image, imageData, base64, ...rest } = item; // Remove image fields
+  return rest;
+});
+
+localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
+      localStorage.setItem('lastSync', new Date().toISOString());
+      
+      // Then try Firebase if available
+      if (!firebaseInitialized || !db || !isOnline) {
+        console.log("No Firebase connection, saved to local storage only");
+        showToast('Data saved locally', 'success');
+        return;
+      }
+
+      try {
+        // Save to Firebase in background
+        const batch = db.batch();
+        inventory.forEach(item => {
+          const cleanItem = { ...item };
+          // Remove any Firebase metadata
+          delete cleanItem._firestore;
+          delete cleanItem._key;
+          
+          const itemRef = db.collection('inventory').doc(item.id);
+          batch.set(itemRef, cleanItem, { merge: true });
+        });
+        
+        await batch.commit();
+        console.log("Inventory saved to Firebase");
+        
+      } catch (error) {
+        console.error("Error saving inventory to Firebase:", error);
+        // Don't show error to user - data is already saved locally
+      }
+    }
+
+    async function saveGRNToFirebase(grn) {
+      // Always save to localStorage first
+      localStorage.setItem('grnRecords', JSON.stringify(grnRecords));
+
+      // Then try Firebase if available
+      if (!firebaseInitialized || !db || !isOnline) {
+        return;
+      }
+
+      try {
+        const cleanGRN = { ...grn };
+        delete cleanGRN._firestore;
+        delete cleanGRN._key;
+        
+        await db.collection('grn').doc(grn.id).set(cleanGRN, { merge: true });
+        console.log("GRN saved to Firebase");
+
+      } catch (error) {
+        console.error("Error saving GRN to Firebase:", error);
+      }
+    }
+
+    async function saveDCToFirebase(dc) {
+      // Always save to localStorage first
+      localStorage.setItem('dcRecords', JSON.stringify(dcRecords));
+
+      // Then try Firebase if available
+      if (!firebaseInitialized || !db || !isOnline) {
+        return;
+      }
+
+      try {
+        const cleanDC = { ...dc };
+        delete cleanDC._firestore;
+        delete cleanDC._key;
+        
+        await db.collection('dc').doc(dc.id).set(cleanDC, { merge: true });
+        console.log("DC saved to Firebase");
+
+      } catch (error) {
+        console.error("Error saving DC to Firebase:", error);
+      }
+    }
+
+    // IMAGE UPLOAD FUNCTIONS - WORKING VERSION
+    function handleDragOver(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.currentTarget.classList.remove('drag-over');
+    }
+
+    async function handleImageDrop(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.currentTarget.classList.remove('drag-over');
+      
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        await processImageFile(files[0]);
+      }
+    }
+
+    async function handleImageSelect(event) {
+      const files = event.target.files;
+      if (files.length > 0) {
+        await processImageFile(files[0]);
+      }
+    }
+
+    async function processImageFile(file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select an image file (JPG, PNG, JPEG, WebP)', 'error');
+        return;
+      }
+      
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        showToast('Image size exceeds 5MB limit. Please choose a smaller image.', 'error');
+        return;
+      }
+      
+      // Show upload progress
+      uploadProgress.style.display = 'block';
+      progressFill.style.width = '10%';
+      progressText.textContent = 'Processing image...';
+      
+      // Disable save button during upload
+      if (saveItemBtn) {
+        saveItemBtn.disabled = true;
+        saveItemBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      }
+      
+      try {
+        // Compress image if needed
+        let processedFile = file;
+        if (file.size > 2 * 1024 * 1024) { // Compress if > 2MB
+          progressFill.style.width = '30%';
+          progressText.textContent = 'Compressing image...';
+          processedFile = await compressImage(file);
+        }
+        
+        // Read file as data URL for preview
+        progressFill.style.width = '60%';
+        progressText.textContent = 'Loading image...';
+        
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+          // Set preview image
+          imagePreview.src = e.target.result;
+          uploadedImageUrl = e.target.result;
+          
+          // Show preview
+          imagePreviewContainer.style.display = 'block';
+          
+          // Complete progress
+          progressFill.style.width = '100%';
+          progressText.textContent = 'Image ready!';
+          
+          // Hide progress after delay
+          setTimeout(() => {
+            uploadProgress.style.display = 'none';
+          }, 1000);
+          
+          // Re-enable save button
+          if (saveItemBtn) {
+            saveItemBtn.disabled = false;
+            saveItemBtn.innerHTML = '<i class="fas fa-save"></i> Save Item';
+          }
+          
+          // Show local storage info
+          localStorageInfo.style.display = 'block';
+          
+          showToast('Image loaded successfully', 'success');
+        };
+        
+        reader.onerror = () => {
+          showToast('Error reading image file', 'error');
+          resetImageUploadState();
+        };
+        
+        reader.readAsDataURL(processedFile);
+        
+      } catch (error) {
+        console.error('Image processing error:', error);
+        showToast('Error processing image: ' + error.message, 'error');
+        resetImageUploadState();
+      }
+    }
+
+    function compressImage(file) {
+      return new Promise((resolve, reject) => {
+        if (file.size <= 500000) { // 500KB or less, no need to compress
+          resolve(file);
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Calculate new dimensions (max 1200px on longest side)
+            let width = img.width;
+            let height = img.height;
+            const maxSize = 1200;
+            
+            if (width > height && width > maxSize) {
+              height = Math.round((height * maxSize) / width);
+              width = maxSize;
+            } else if (height > maxSize) {
+              width = Math.round((width * maxSize) / height);
+              height = maxSize;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Draw and compress
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            canvas.toBlob((blob) => {
+              if (blob) {
+                resolve(new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                }));
+              } else {
+                reject(new Error('Canvas to Blob conversion failed'));
+              }
+            }, 'image/jpeg', 0.7); // 0.7 quality
+          };
+          
+          img.onerror = reject;
+        };
+        
+        reader.onerror = reject;
+      });
+    }
+
+    function removeUploadedImage() {
+      uploadedImageUrl = '';
+      imagePreviewContainer.style.display = 'none';
+      imageInput.value = '';
+      localStorageInfo.style.display = 'none';
+      showToast('Image removed', 'info');
+    }
+
+    function toggleImageSource() {
+      isUsingUrlForItem = !isUsingUrlForItem;
+      
+      if (isUsingUrlForItem) {
+        imageDropZone.style.display = 'none';
+        imagePreviewContainer.style.display = 'none';
+        imageUrlSection.style.display = 'block';
+        uploadProgress.style.display = 'none';
+        toggleImageSourceBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Switch to File Upload';
+        showToast('Now using URL input for image', 'info');
+      } else {
+        imageDropZone.style.display = 'block';
+        imageUrlSection.style.display = 'none';
+        if (uploadedImageUrl) {
+          imagePreviewContainer.style.display = 'block';
+        }
+        toggleImageSourceBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Switch to URL Input';
+        showToast('Now using file upload for image', 'info');
+      }
+    }
+    // DC Image Functions
+    function handleDCDragOver(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDCDragLeave(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.currentTarget.classList.remove('drag-over');
+    }
+
+    async function handleDCDragDrop(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.currentTarget.classList.remove('drag-over');
+      
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        await processDCImageFile(files[0]);
+      }
+    }
+
+    async function handleDCImageSelect(event) {
+      const files = event.target.files;
+      if (files.length > 0) {
+        await processDCImageFile(files[0]);
+      }
+    }
+
+    async function processDCImageFile(file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select an image file (JPG, PNG, JPEG, WebP)', 'error');
+        return;
+      }
+      
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        showToast('Image size exceeds 5MB limit. Please choose a smaller image.', 'error');
+        return;
+      }
+      
+      // Show upload progress
+      const dcUploadProgress = document.getElementById('dcUploadProgress');
+      const dcProgressFill = document.getElementById('dcProgressFill');
+      const dcProgressText = document.getElementById('dcProgressText');
+      
+      dcUploadProgress.style.display = 'block';
+      dcProgressFill.style.width = '10%';
+      dcProgressText.textContent = 'Processing image...';
+      
+      try {
+        // Compress image if needed
+        let processedFile = file;
+        if (file.size > 2 * 1024 * 1024) {
+          dcProgressFill.style.width = '30%';
+          dcProgressText.textContent = 'Compressing image...';
+          processedFile = await compressImage(file);
+        }
+        
+        // Read file as data URL
+        dcProgressFill.style.width = '60%';
+        dcProgressText.textContent = 'Loading image...';
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          // Set preview image
+          document.getElementById('dcImagePreviewImg').src = e.target.result;
+          uploadedDCImageUrl = e.target.result;
+          
+          // Show preview
+          document.getElementById('dcImagePreview').style.display = 'block';
+          
+          // Complete progress
+          dcProgressFill.style.width = '100%';
+          dcProgressText.textContent = 'Image ready!';
+          
+          // Hide progress after delay
+          setTimeout(() => {
+            dcUploadProgress.style.display = 'none';
+          }, 1000);
+          
+          showToast('DC image loaded successfully', 'success');
+        };
+        
+        reader.onerror = () => {
+          showToast('Error reading DC image file', 'error');
+          dcUploadProgress.style.display = 'none';
+        };
+        
+        reader.readAsDataURL(processedFile);
+        
+      } catch (error) {
+        console.error('DC image processing error:', error);
+        showToast('Error processing DC image: ' + error.message, 'error');
+        dcUploadProgress.style.display = 'none';
+      }
+    }
+
+    function removeDCImage() {
+      uploadedDCImageUrl = '';
+      document.getElementById('dcImagePreview').style.display = 'none';
+      document.getElementById('dcImageInput').value = '';
+      showToast('DC image removed', 'info');
+    }
+
+    function toggleDCImageSource() {
+      isUsingUrlForDC = !isUsingUrlForDC;
+      const dcImageUrlSection = document.getElementById('dcImageUrlSection');
+      const dcImageDropZone = document.getElementById('dcImageDropZone');
+      const toggleBtn = document.getElementById('toggleDCImageSourceBtn');
+      
+      if (isUsingUrlForDC) {
+        dcImageDropZone.style.display = 'none';
+        dcImageUrlSection.style.display = 'block';
+        toggleBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Switch to File Upload';
+        showToast('Now using URL input for DC image', 'info');
+      } else {
+        dcImageDropZone.style.display = 'block';
+        dcImageUrlSection.style.display = 'none';
+        toggleBtn.innerHTML = '<i class="fas fa-link"></i> Enter URL instead';
+        showToast('Now using file upload for DC image', 'info');
+      }
+    }
+
+    function resetImageUploadState() {
+      uploadProgress.style.display = 'none';
+      if (saveItemBtn) {
+        saveItemBtn.disabled = false;
+        saveItemBtn.innerHTML = '<i class="fas fa-save"></i> Save Item';
+      }
+    }
+
+    function resetAddItemForm() {
+      // Reset form fields
+      addItemForm.reset();
+      uploadedImageUrl = '';
+      isUsingUrlForItem = false;
+      currentEditItemId = null;
+      
+      // Reset image preview
+      imagePreviewContainer.style.display = 'none';
+      imageDropZone.style.display = 'block';
+      imageUrlSection.style.display = 'none';
+      uploadProgress.style.display = 'none';
+      imageDropZone.classList.remove('drag-over');
+      localStorageInfo.style.display = 'none';
+      
+      // Reset progress
+      progressFill.style.width = '0%';
+      progressText.textContent = 'Uploading...';
+      
+      // Reset toggle button text
+      if (toggleImageSourceBtn) {
+        toggleImageSourceBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Switch to URL Input';
+      }
+      
+      // Enable save button
+      if (saveItemBtn) {
+        saveItemBtn.disabled = false;
+        saveItemBtn.innerHTML = '<i class="fas fa-save"></i> Save Item';
+      }
+    }
+
+    function resetDCForm() {
+      createDCForm.reset();
+      uploadedDCImageUrl = '';
+      isUsingUrlForDC = false;
+      
+      // Reset DC image preview
+      document.getElementById('dcImagePreview').style.display = 'none';
+      document.getElementById('dcImageDropZone').style.display = 'block';
+      document.getElementById('dcImageUrlSection').style.display = 'none';
+      document.getElementById('dcUploadProgress').style.display = 'none';
+      
+      // Reset toggle button text
+      const toggleBtn = document.getElementById('toggleDCImageSourceBtn');
+      if (toggleBtn) {
+        toggleBtn.innerHTML = '<i class="fas fa-link"></i> Enter URL instead';
+      }
+    }
+
+    function setupEventListeners() {
+      // Navigation
+      navLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const sectionId = this.getAttribute('data-section');
+
+          // Update active nav link
+          navLinks.forEach(nav => nav.classList.remove('active'));
+          this.classList.add('active');
+
+          // Show selected section
+          sections.forEach(section => {
+            section.classList.remove('active-section');
+            if (section.id === sectionId) {
+              section.classList.add('active-section');
+
+              // Update page title
+              const sectionName = this.querySelector('span').textContent;
+              pageTitle.textContent = sectionName;
+
+              // Load section-specific data
+              loadSectionData(sectionId);
+            }
+          });
+
+          // Close sidebar on mobile
+          if (window.innerWidth <= 1200) {
+            sidebar.classList.remove('active');
+          }
+        });
+      });
+
+      // Mobile menu toggle
+      if (menuToggle) {
+        menuToggle.addEventListener('click', function () {
+          sidebar.classList.toggle('active');
+        });
+      }
+
+      // Search functionality
+      if (searchBar) {
+        searchBar.addEventListener('input', debounce(function () {
+          filterInventory();
+        }, 300));
+      }
+
+      // Add item buttons
+      if (addItemBtn) {
+        addItemBtn.addEventListener('click', showAddItemModal);
+      }
+
+      if (addInventoryBtn) {
+        addInventoryBtn.addEventListener('click', showAddItemModal);
+      }
+
+      // Close modals
+      if (closeAddItemModal) {
+        closeAddItemModal.addEventListener('click', () => {
+          addItemModal.classList.remove('active');
+          resetAddItemForm();
+        });
+      }
+
+      if (cancelAddItem) {
+        cancelAddItem.addEventListener('click', () => {
+          addItemModal.classList.remove('active');
+          resetAddItemForm();
+        });
+      }
+
+      if (closeGRNModal) {
+        closeGRNModal.addEventListener('click', () => createGRNModal.classList.remove('active'));
+      }
+
+      if (cancelGRN) {
+        cancelGRN.addEventListener('click', () => createGRNModal.classList.remove('active'));
+      }
+
+      if (closeDCModal) {
+        closeDCModal.addEventListener('click', () => {
+          createDCModal.classList.remove('active');
+          resetDCForm();
+        });
+      }
+
+      if (cancelDC) {
+        cancelDC.addEventListener('click', () => {
+          createDCModal.classList.remove('active');
+          resetDCForm();
+        });
+      }
+
+      // Form submissions
+      addItemForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        showLoading('Saving item...');
+        await handleAddItem(e);
+        hideLoading();
+      });
+
+      createGRNForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        showLoading('Creating GRN...');
+        await handleCreateGRN(e);
+        hideLoading();
+      });
+
+      createDCForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        showLoading('Creating DC...');
+        await handleCreateDC(e);
+        hideLoading();
+      });
+
+      // Export button dropdown
+      if (exportBtn) {
+        exportBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const exportOptions = document.querySelector('.export-options');
+          exportOptions.style.display = exportOptions.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Close dropdown when clicking elsewhere
+        document.addEventListener('click', function() {
+          const exportOptions = document.querySelector('.export-options');
+          exportOptions.style.display = 'none';
+        });
+      }
+
+      // Transaction filters
+      if (transTypeFilter) {
+        transTypeFilter.addEventListener('change', filterTransactions);
+      }
+
+      if (transDateFilter) {
+        transDateFilter.addEventListener('change', filterTransactions);
+      }
+
+      // Settings
+      if (saveSettingsBtn) {
+        saveSettingsBtn.addEventListener('click', saveSettings);
+      }
+
+      if (resetSettingsBtn) {
+        resetSettingsBtn.addEventListener('click', resetSettings);
+      }
+
+      // Toast close button
+      if (toastClose) {
+        toastClose.addEventListener('click', () => {
+          toast.classList.remove('show');
+        });
+      }
+
+      // Close modals with Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          closeAllModals();
+        }
+      });
+
+      // Close big image modal
+      if (bigImageModal) {
+        bigImageModal.addEventListener('click', function (e) {
+          if (e.target === bigImageModal) {
+            bigImageModal.classList.remove('active');
+          }
+        });
+      }
+
+      // Setup report event listeners
+      setupReportEventListeners();
+    }
+
+    function initReportTabs() {
+      reportTabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+          const reportId = this.getAttribute('data-report');
+          
+          // Update active tab
+          reportTabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Show selected report content
+          reportContents.forEach(content => {
+            content.classList.remove('active');
+            if (content.id === reportId) {
+              content.classList.add('active');
+              currentReportTab = reportId;
+              
+              // Load data for the selected report
+              if (reportId === 'grn-reports') {
+                generateGRNReport();
+              } else if (reportId === 'dc-reports') {
+                generateDCReport();
+              } else if (reportId === 'stock-reports') {
+                generateReport();
+              }
+            }
+          });
+        });
+      });
+    }
+
+    function setupReportEventListeners() {
+      // GRN Report Filters
+      const grnReportStartDate = document.getElementById('grnReportStartDate');
+      const grnReportEndDate = document.getElementById('grnReportEndDate');
+      const grnSupplierFilter = document.getElementById('grnSupplierFilter');
+      const grnFloorFilter = document.getElementById('grnFloorFilter');
+      const grnItemFilter = document.getElementById('grnItemFilter');
+
+      if (grnReportStartDate) grnReportStartDate.addEventListener('change', generateGRNReport);
+      if (grnReportEndDate) grnReportEndDate.addEventListener('change', generateGRNReport);
+      if (grnSupplierFilter) grnSupplierFilter.addEventListener('input', debounce(generateGRNReport, 300));
+      if (grnFloorFilter) grnFloorFilter.addEventListener('change', generateGRNReport);
+      if (grnItemFilter) grnItemFilter.addEventListener('input', debounce(generateGRNReport, 300));
+
+      // DC Report Filters
+      const dcReportStartDate = document.getElementById('dcReportStartDate');
+      const dcReportEndDate = document.getElementById('dcReportEndDate');
+      const dcCustomerFilter = document.getElementById('dcCustomerFilter');
+      const dcFloorFilter = document.getElementById('dcFloorFilter');
+      const dcItemFilter = document.getElementById('dcItemFilter');
+
+      if (dcReportStartDate) dcReportStartDate.addEventListener('change', generateDCReport);
+      if (dcReportEndDate) dcReportEndDate.addEventListener('change', generateDCReport);
+      if (dcCustomerFilter) dcCustomerFilter.addEventListener('input', debounce(generateDCReport, 300));
+      if (dcFloorFilter) dcFloorFilter.addEventListener('change', generateDCReport);
+      if (dcItemFilter) dcItemFilter.addEventListener('input', debounce(generateDCReport, 300));
+    }
+
+    function initFloorFilter() {
+      if (!floorFilter) return;
+
+      const buttons = floorFilter.querySelectorAll('.floor-filter-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', function () {
+          // Update active button
+          buttons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          // Update filter
+          currentFloorFilter = this.getAttribute('data-floor');
+
+          // Filter inventory
+          filterInventory();
+        });
+      });
+    }
+
+    function loadSectionData(sectionId) {
+      switch (sectionId) {
+        case 'dashboard':
+          updateDashboard();
+          break;
+        case 'inventory':
+          renderInventoryTable();
+          break;
+        case 'transactions':
+          renderTransactionsTable();
+          break;
+        case 'reports':
+          // Show the currently active report
+          if (currentReportTab === 'grn-reports') {
+            generateGRNReport();
+          } else if (currentReportTab === 'dc-reports') {
+            generateDCReport();
+          } else {
+            generateReport();
+          }
+          break;
+      }
+    }
+
+    // UI Rendering Functions
+    function renderInventoryTable() {
+      if (!inventoryTableBody) return;
+
+      const filteredItems = getFilteredInventory();
+
+      if (filteredItems.length === 0) {
+        inventoryTableBody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px;">
+              <i class="fas fa-box-open" style="font-size: 48px; color: var(--text-muted); margin-bottom: 15px;"></i>
+              <h4 style="color: var(--text-muted); margin-bottom: 10px;">No items found</h4>
+              <p style="color: var(--text-muted);">Try adjusting your filters or add new items</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      filteredItems.forEach(item => {
+        const stockClass = getStockClass(item.stock);
+        const floorClass = `floor-${item.floor}`;
+        const floorName = config.floors.find(f => f.id === item.floor)?.name || item.floor;
+        
+        // Handle image - use item image or default
+        let imageUrl = item.image || settings.defaultImage;
+
+        html += `
+          <tr>
+            <td>
+              <img src="${imageUrl}" 
+                   alt="${item.name}" 
+                   class="item-image"
+                   onerror="this.src='${settings.defaultImage}'"
+                   onclick="showBigImage('${imageUrl.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}')">
+            </td>
+            <td>
+              <strong>${item.name}</strong><br>
+              <small style="color: var(--text-muted);">
+                Code: <strong>${item.code || 'N/A'}</strong><br>
+                ${item.description || 'No description'}
+              </small>
+            </td>
+            <td>${item.category}</td>
+            <td>
+              <span class="floor-badge ${floorClass}">
+                <i class="fas fa-building"></i>
+                ${floorName}
+              </span>
+            </td>
+            <td>
+              <span class="stock-badge ${stockClass}">
+                <i class="fas fa-box"></i>
+                ${item.stock} units
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn edit" onclick="editItem('${item.id}')" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete" onclick="deleteItem('${item.id}')" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      inventoryTableBody.innerHTML = html;
+    }
+
+    function getFilteredInventory() {
+      let filtered = [...inventory];
+
+      // Apply floor filter
+      if (currentFloorFilter !== 'all') {
+        filtered = filtered.filter(item => item.floor === currentFloorFilter);
+      }
+
+      // Apply category filter
+      const category = categoryFilter ? categoryFilter.value : '';
+      if (category) {
+        filtered = filtered.filter(item => item.category === category);
+      }
+
+      // Apply search filter
+      const searchTerm = searchBar.value.toLowerCase();
+      if (searchTerm) {
+        filtered = filtered.filter(item =>
+          item.name.toLowerCase().includes(searchTerm) ||
+          (item.code && item.code.toLowerCase().includes(searchTerm)) ||
+          item.description?.toLowerCase().includes(searchTerm) ||
+          item.category.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      return filtered;
+    }
+
+    function filterInventory() {
+      renderInventoryTable();
+    }
+
+    function renderTransactionsTable() {
+      if (!transactionsTableBody) return;
+
+      let filteredTransactions = [...transactions];
+
+      // Apply type filter
+      const typeFilter = transTypeFilter ? transTypeFilter.value : 'all';
+      if (typeFilter !== 'all') {
+        filteredTransactions = filteredTransactions.filter(t => t.type === typeFilter);
+      }
+
+      // Apply date filter
+      const dateFilter = transDateFilter ? transDateFilter.value : '';
+      if (dateFilter) {
+        filteredTransactions = filteredTransactions.filter(t => t.date === dateFilter);
+      }
+
+      if (filteredTransactions.length === 0) {
+        transactionsTableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <i class="fas fa-exchange-alt" style="font-size: 48px; margin-bottom: 15px;"></i>
+              <h4>No transactions found</h4>
+              <p>Try adjusting your filters</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      filteredTransactions.forEach(transaction => {
+        const floorClass = `floor-${transaction.floor}`;
+        const floorName = config.floors.find(f => f.id === transaction.floor)?.name || transaction.floor;
+        const time = transaction.createdAt ?
+          new Date(transaction.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+
+        html += `
+          <tr>
+            <td>${transaction.date} ${time}</td>
+            <td>
+              <span class="stock-badge ${transaction.type === 'GRN' ? 'stock-high' : 'stock-low'}" 
+                    style="padding: 4px 8px; font-size: 12px;">
+                ${transaction.type}
+              </span>
+            </td>
+            <td><strong>${transaction.id}</strong></td>
+            <td>${transaction.itemName}</td>
+            <td>
+              <span class="floor-badge ${floorClass}" style="padding: 4px 8px; font-size: 12px;">
+                ${floorName}
+              </span>
+            </td>
+            <td>${transaction.quantity}</td>
+            <td>${transaction.party}</td>
+            <td>System</td>
+          </tr>
+        `;
+      });
+
+      transactionsTableBody.innerHTML = html;
+    }
+
+    function filterTransactions() {
+      renderTransactionsTable();
+    }
+
+    function updateDashboard() {
+      updateFloorStats();
+      updateRecentActivity();
+    }
+
+    function updateFloorStats() {
+      if (!floorStats) return;
+
+      let html = '';
+      config.floors.forEach(floor => {
+        const floorItems = inventory.filter(item => item.floor === floor.id);
+        const totalStock = floorItems.reduce((sum, item) => sum + item.stock, 0);
+        const itemCount = floorItems.length;
+
+        html += `
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-info">
+                <h3>${floor.name}</h3>
+                <div class="stat-value">${totalStock}</div>
+              </div>
+              <div class="stat-icon" style="color: ${floor.color};">
+                <i class="fas fa-building"></i>
+              </div>
+            </div>
+            <div style="margin-top: 15px; font-size: 14px; color: var(--text-muted);">
+              <div>${itemCount} items</div>
+              <div>Stock Level: ${getFloorStockStatus(totalStock)}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      floorStats.innerHTML = html;
+    }
+    
+    function getFloorStockStatus(totalStock) {
+      if (totalStock === 0) return 'Empty';
+      if (totalStock < 10) return 'Low';
+      if (totalStock < 50) return 'Medium';
+      return 'Good';
+    }
+
+    function updateRecentActivity() {
+      if (!recentActivityBody) return;
+
+      const recentTransactions = [...transactions]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 10);
+
+      if (recentTransactions.length === 0) {
+        recentActivityBody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No recent activity
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      recentTransactions.forEach(transaction => {
+        const time = transaction.createdAt ?
+          new Date(transaction.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+        const floorName = config.floors.find(f => f.id === transaction.floor)?.name || transaction.floor;
+
+        html += `
+          <tr>
+            <td>${time}</td>
+            <td>
+              <span class="stock-badge ${transaction.type === 'GRN' ? 'stock-high' : 'stock-low'}" 
+                    style="padding: 4px 8px; font-size: 12px;">
+                ${transaction.type}
+              </span>
+            </td>
+            <td>${transaction.itemName}</td>
+            <td>${floorName}</td>
+            <td>${transaction.quantity}</td>
+            <td>${transaction.party}</td>
+          </tr>
+        `;
+      });
+
+      recentActivityBody.innerHTML = html;
+    }
+
+    function updateTransactions() {
+      transactions = [];
+
+      // Add GRN transactions
+      grnRecords.forEach(grn => {
+        transactions.push({
+          id: grn.id,
+          type: 'GRN',
+          date: grn.date,
+          itemId: grn.itemId,
+          itemCode: grn.itemCode,
+          itemName: grn.itemName,
+          floor: grn.floor,
+          quantity: grn.quantity,
+          party: grn.supplier,
+          createdAt: grn.createdAt
+        });
+      });
+
+      // Add DC transactions
+      dcRecords.forEach(dc => {
+        transactions.push({
+          id: dc.id,
+          type: 'DC',
+          date: dc.date,
+          itemId: dc.itemId,
+          itemCode: dc.itemCode,
+          itemName: dc.itemName,
+          floor: dc.floor,
+          quantity: dc.quantity,
+          party: dc.customer,
+          createdAt: dc.createdAt
+        });
+      });
+
+      // Sort by date
+      transactions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
+    // Modal Functions
+    function showAddItemModal() {
+      currentEditItemId = null;
+      resetAddItemForm();
+      document.querySelector('#addItemModal .modal-title').innerHTML = 
+        '<i class="fas fa-plus-circle"></i> Add New Item';
+      addItemModal.classList.add('active');
+    }
+
+    function showCreateGRNModal() {
+      populateGRNItemSelect();
+      createGRNModal.classList.add('active');
+    }
+
+    function showCreateDCModal() {
+      populateDCItemSelect();
+      createDCModal.classList.add('active');
+    }
+
+    function populateGRNItemSelect() {
+      const select = document.getElementById('grnItem');
+      const searchInput = document.getElementById('grnItemSearch');
+
+      if (!select) return;
+
+      // Clear existing options
+      select.innerHTML = '<option value="">Select Item</option>';
+
+      // Add items grouped by floor
+      config.floors.forEach(floor => {
+        const floorItems = inventory.filter(item => item.floor === floor.id);
+        if (floorItems.length > 0) {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = floor.name;
+          optgroup.setAttribute('data-floor', floor.id);
+
+          floorItems.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = `${item.code || 'N/A'} - ${item.name} (Stock: ${item.stock}) - ${item.category}`;
+            option.setAttribute('data-code', item.code);
+            option.setAttribute('data-name', item.name);
+            option.setAttribute('data-stock', item.stock);
+            option.setAttribute('data-floor', item.floor);
+            option.setAttribute('data-category', item.category);
+            optgroup.appendChild(option);
+          });
+
+          select.appendChild(optgroup);
+        }
+      });
+
+      // Set up search functionality
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.addEventListener('input', function () {
+          filterGRNItems(this.value);
+        });
+      }
+    }
+
+    function filterGRNItems(searchTerm) {
+      const select = document.getElementById('grnItem');
+      const optgroups = select.querySelectorAll('optgroup');
+
+      searchTerm = searchTerm.toLowerCase().trim();
+
+      if (!searchTerm) {
+        // Show all items
+        optgroups.forEach(optgroup => {
+          optgroup.style.display = '';
+          const childOptions = optgroup.querySelectorAll('option');
+          childOptions.forEach(option => {
+            option.style.display = '';
+          });
+        });
+        return;
+      }
+
+      optgroups.forEach(optgroup => {
+        let hasVisibleItems = false;
+        const childOptions = optgroup.querySelectorAll('option');
+
+        childOptions.forEach(option => {
+          const text = option.textContent.toLowerCase();
+          const code = option.getAttribute('data-code') || '';
+          const name = option.getAttribute('data-name') || '';
+          const category = option.getAttribute('data-category') || '';
+
+          if (text.includes(searchTerm) ||
+            code.toLowerCase().includes(searchTerm) ||
+            name.toLowerCase().includes(searchTerm) ||
+            category.toLowerCase().includes(searchTerm)) {
+            option.style.display = '';
+            hasVisibleItems = true;
+          } else {
+            option.style.display = 'none';
+          }
+        });
+
+        optgroup.style.display = hasVisibleItems ? '' : 'none';
+      });
+    }
+
+    function populateDCItemSelect() {
+      const select = document.getElementById('dcItem');
+      const searchInput = document.getElementById('dcItemSearch');
+
+      if (!select) return;
+
+      // Clear existing options
+      select.innerHTML = '<option value="">Select Item</option>';
+
+      // Add items grouped by floor
+      config.floors.forEach(floor => {
+        const floorItems = inventory.filter(item => item.floor === floor.id);
+        if (floorItems.length > 0) {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = floor.name;
+          optgroup.setAttribute('data-floor', floor.id);
+
+          floorItems.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = `${item.code || 'N/A'} - ${item.name} (Stock: ${item.stock}) - ${item.category}`;
+            option.setAttribute('data-code', item.code);
+            option.setAttribute('data-name', item.name);
+            option.setAttribute('data-stock', item.stock);
+            option.setAttribute('data-floor', item.floor);
+            option.setAttribute('data-category', item.category);
+            optgroup.appendChild(option);
+          });
+
+          select.appendChild(optgroup);
+        }
+      });
+
+      // Set up search functionality
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.addEventListener('input', function () {
+          filterDCItems(this.value);
+        });
+      }
+    }
+
+    function filterDCItems(searchTerm) {
+      const select = document.getElementById('dcItem');
+      const optgroups = select.querySelectorAll('optgroup');
+
+      searchTerm = searchTerm.toLowerCase().trim();
+
+      if (!searchTerm) {
+        // Show all items
+        optgroups.forEach(optgroup => {
+          optgroup.style.display = '';
+          const childOptions = optgroup.querySelectorAll('option');
+          childOptions.forEach(option => {
+            option.style.display = '';
+          });
+        });
+        return;
+      }
+
+      optgroups.forEach(optgroup => {
+        let hasVisibleItems = false;
+        const childOptions = optgroup.querySelectorAll('option');
+
+        childOptions.forEach(option => {
+          const text = option.textContent.toLowerCase();
+          const code = option.getAttribute('data-code') || '';
+          const name = option.getAttribute('data-name') || '';
+          const category = option.getAttribute('data-category') || '';
+
+          if (text.includes(searchTerm) ||
+            code.toLowerCase().includes(searchTerm) ||
+            name.toLowerCase().includes(searchTerm) ||
+            category.toLowerCase().includes(searchTerm)) {
+            option.style.display = '';
+            hasVisibleItems = true;
+          } else {
+            option.style.display = 'none';
+          }
+        });
+
+        optgroup.style.display = hasVisibleItems ? '' : 'none';
+      });
+    }
+
+    // Form Handlers
+    async function handleAddItem(e) {
+      e.preventDefault();
+
+      // Get image URL - either uploaded or from URL input
+      let finalImage = settings.defaultImage;
+      if (isUsingUrlForItem) {
+        const imageUrl = itemImageUrl.value.trim();
+        if (imageUrl) {
+          finalImage = imageUrl;
+        }
+      } else if (uploadedImageUrl) {
+        finalImage = uploadedImageUrl;
+      }
+
+      const itemData = {
+        code: document.getElementById('itemCode').value,
+        name: document.getElementById('itemName').value,
+        category: document.getElementById('itemCategory').value,
+        floor: document.getElementById('itemFloor').value,
+        stock: parseInt(document.getElementById('itemStock').value),
+        image: finalImage,
+        description: document.getElementById('itemDescription').value,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (currentEditItemId) {
+        // UPDATE EXISTING ITEM
+        const itemIndex = inventory.findIndex(i => i.id === currentEditItemId);
+        if (itemIndex !== -1) {
+          // Preserve created date if exists
+          if (inventory[itemIndex].createdAt) {
+            itemData.createdAt = inventory[itemIndex].createdAt;
+          } else {
+            itemData.createdAt = new Date().toISOString();
+          }
+          
+          inventory[itemIndex] = { ...inventory[itemIndex], ...itemData };
+          showToast('Item updated successfully', 'success');
+        }
+      } else {
+        // ADD NEW ITEM
+        const newItem = {
+          id: Date.now().toString(),
+          ...itemData,
+          createdAt: new Date().toISOString()
+        };
+        inventory.push(newItem);
+        showToast('Item added successfully', 'success');
+      }
+
+      // Save to Firebase and localStorage
+      await saveInventoryToFirebase();
+
+      // Close modal and reset form
+      addItemModal.classList.remove('active');
+      resetAddItemForm();
+
+      // Update UI
+      renderInventoryTable();
+      updateDashboard();
+    }
+
+    async function handleCreateGRN(e) {
+      e.preventDefault();
+
+      const itemId = document.getElementById('grnItem').value;
+      const item = inventory.find(i => i.id === itemId);
+
+      if (!item) {
+        showToast('Please select a valid item', 'error');
+        return;
+      }
+
+      const grn = {
+        id: `${settings.grnPrefix}-${String(grnRecords.length + 1).padStart(3, '0')}`,
+        date: document.getElementById('grnDate').value,
+        supplier: document.getElementById('grnSupplier').value,
+        itemId: itemId,
+        itemCode: item.code,
+        itemName: item.name,
+        floor: document.getElementById('grnFloor').value,
+        quantity: parseInt(document.getElementById('grnQuantity').value),
+        notes: document.getElementById('grnNotes').value,
+        createdAt: new Date().toISOString()
+      };
+
+      // Add stock to item
+      item.stock += grn.quantity;
+
+      // Add GRN record
+      grnRecords.push(grn);
+
+      // Update transactions
+      updateTransactions();
+
+      // Save to Firebase and localStorage
+      await saveGRNToFirebase(grn);
+      await saveInventoryToFirebase();
+
+      // Close modal and reset form
+      createGRNModal.classList.remove('active');
+      createGRNForm.reset();
+
+      // Update UI
+      updateDashboard();
+
+      showToast(`GRN created successfully. ${grn.quantity} ${item.name}(s) added to ${config.floors.find(f => f.id === grn.floor)?.name}`, 'success');
+    }
+
+    async function handleCreateDC(e) {
+      e.preventDefault();
+
+      const itemId = document.getElementById('dcItem').value;
+      const item = inventory.find(i => i.id === itemId);
+
+      if (!item) {
+        showToast('Please select a valid item', 'error');
+        return;
+      }
+
+      const quantity = parseInt(document.getElementById('dcQuantity').value);
+
+      // Check stock availability
+      if (item.stock < quantity) {
+        showToast(`Insufficient stock! Available: ${item.stock}`, 'error');
+        return;
+      }
+
+      // Get dispatch image
+      let dispatchImage = null;
+      if (isUsingUrlForDC) {
+        const imageUrl = document.getElementById('dcImageUrl').value.trim();
+        if (imageUrl) {
+          dispatchImage = imageUrl;
+        }
+      } else if (uploadedDCImageUrl) {
+        dispatchImage = uploadedDCImageUrl;
+      }
+
+      const dc = {
+        id: `${settings.dcPrefix}-${String(dcRecords.length + 1).padStart(3, '0')}`,
+        date: document.getElementById('dcDate').value,
+        customer: document.getElementById('dcCustomer').value,
+        itemId: itemId,
+        itemCode: item.code,
+        itemName: item.name,
+        floor: document.getElementById('dcFloor').value,
+        quantity: quantity,
+        notes: document.getElementById('dcNotes').value,
+        dispatchImage: dispatchImage,
+        createdAt: new Date().toISOString()
+      };
+
+      // Remove stock from item
+      item.stock -= dc.quantity;
+
+      // Add DC record
+      dcRecords.push(dc);
+
+      // Update transactions
+      updateTransactions();
+
+      // Save to Firebase and localStorage
+      await saveDCToFirebase(dc);
+      await saveInventoryToFirebase();
+
+      // Close modal and reset form
+      createDCModal.classList.remove('active');
+      resetDCForm();
+
+      // Update UI
+      updateDashboard();
+
+      showToast(`DC created successfully. ${dc.quantity} ${item.name}(s) dispatched from ${config.floors.find(f => f.id === dc.floor)?.name}`, 'success');
+    }
+
+    // Report Functions
+    function generateReport() {
+      const type = reportType.value;
+      currentReportType = type;
+
+      switch (type) {
+        case 'stock_summary':
+          generateStockSummary();
+          break;
+        case 'floor_wise':
+          generateFloorWiseReport();
+          break;
+        case 'category_wise':
+          generateCategoryWiseReport();
+          break;
+      }
+    }
+
+    function generateStockSummary() {
+      currentReportTitle = 'Stock Summary Report';
+      currentReportData = [...inventory];
+
+      reportTableHead.innerHTML = `
+        <tr>
+          <th>Image</th>
+          <th>Item Code</th>
+          <th>Item Name</th>
+          <th>Category</th>
+          <th>Floor</th>
+          <th>Stock</th>
+        </tr>
+      `;
+
+      let html = '';
+      inventory.forEach(item => {
+        const floorName = config.floors.find(f => f.id === item.floor)?.name || item.floor;
+        
+        // Get image URL
+        let imageUrl = item.image || settings.defaultImage;
+
+        html += `
+          <tr>
+            <td>
+              <img src="${imageUrl}" 
+                   alt="${item.name}" 
+                   class="item-image"
+                   onclick="showBigImage('${imageUrl.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}')"
+                   style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+            </td>
+            <td><strong>${item.code || 'N/A'}</strong></td>
+            <td>${item.name}</td>
+            <td>${item.category}</td>
+            <td>${floorName}</td>
+            <td>${item.stock}</td>
+          </tr>
+        `;
+      });
+
+      reportTableBody.innerHTML = html;
+    }
+
+    function generateGroundFloorReport() {
+      currentReportTitle = 'Ground Floor Stock Report';
+      currentReportData = inventory.filter(item => item.floor === 'ground');
+
+      reportTableHead.innerHTML = `
+        <tr>
+          <th>Image</th>
+          <th>Item Code</th>
+          <th>Item Name</th>
+          <th>Category</th>
+          <th>Stock</th>
+        </tr>
+      `;
+
+      if (currentReportData.length === 0) {
+        reportTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No items found in Ground Floor
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      currentReportData.forEach(item => {
+        // Get image URL
+        let imageUrl = item.image || settings.defaultImage;
+
+        html += `
+          <tr>
+            <td>
+              <img src="${imageUrl}" 
+                   alt="${item.name}" 
+                   class="report-image"
+                   onclick="showBigImage('${imageUrl.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}')">
+            </td>
+            <td><strong class="report-code">${item.code || 'N/A'}</strong></td>
+            <td>${item.name}</td>
+            <td>${item.category}</td>
+            <td>${item.stock}</td>
+          </tr>
+        `;
+      });
+
+      reportTableBody.innerHTML = html;
+    }
+
+    function generateFirstFloorReport() {
+      currentReportTitle = '1st Floor Stock Report';
+      currentReportData = inventory.filter(item => item.floor === 'first');
+      
+      reportTableHead.innerHTML = `
+        <tr>
+          <th>Image</th>
+          <th>Item Code</th>
+          <th>Item Name</th>
+          <th>Category</th>
+          <th>Stock</th>
+        </tr>
+      `;
+
+      if (currentReportData.length === 0) {
+        reportTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No items found in 1st Floor
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      currentReportData.forEach(item => {
+        // Get image URL
+        let imageUrl = item.image || settings.defaultImage;
+
+        html += `
+          <tr>
+            <td>
+              <img src="${imageUrl}" 
+                   alt="${item.name}" 
+                   class="report-image"
+                   onclick="showBigImage('${imageUrl.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}')">
+            </td>
+            <td><strong class="report-code">${item.code || 'N/A'}</strong></td>
+            <td>${item.name}</td>
+            <td>${item.category}</td>
+            <td>${item.stock}</td>
+          </tr>
+        `;
+      });
+
+      reportTableBody.innerHTML = html;
+    }
+
+    function generateFourthFloorReport() {
+      currentReportTitle = '4th Floor Stock Report';
+      currentReportData = inventory.filter(item => item.floor === 'fourth');
+      
+      reportTableHead.innerHTML = `
+        <tr>
+          <th>Image</th>
+          <th>Item Code</th>
+          <th>Item Name</th>
+          <th>Category</th>
+          <th>Stock</th>
+        </tr>
+      `;
+
+      if (currentReportData.length === 0) {
+        reportTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No items found in 4th Floor
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      currentReportData.forEach(item => {
+        // Get image URL
+        let imageUrl = item.image || settings.defaultImage;
+
+        html += `
+          <tr>
+            <td>
+              <img src="${imageUrl}" 
+                   alt="${item.name}" 
+                   class="report-image"
+                   onclick="showBigImage('${imageUrl.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}')">
+            </td>
+            <td><strong class="report-code">${item.code || 'N/A'}</strong></td>
+            <td>${item.name}</td>
+            <td>${item.category}</td>
+            <td>${item.stock}</td>
+          </tr>
+        `;
+      });
+
+      reportTableBody.innerHTML = html;
+    }
+
+    function generateFifthFloorReport() {
+      currentReportTitle = '5th Floor Stock Report';
+      currentReportData = inventory.filter(item => item.floor === 'fifth');
+      
+      reportTableHead.innerHTML = `
+        <tr>
+          <th>Image</th>
+          <th>Item Code</th>
+          <th>Item Name</th>
+          <th>Category</th>
+          <th>Stock</th>
+        </tr>
+      `;
+
+      if (currentReportData.length === 0) {
+        reportTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No items found in 5th Floor
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      currentReportData.forEach(item => {
+        // Get image URL
+        let imageUrl = item.image || settings.defaultImage;
+
+        html += `
+          <tr>
+            <td>
+              <img src="${imageUrl}" 
+                   alt="${item.name}" 
+                   class="report-image"
+                   onclick="showBigImage('${imageUrl.replace(/'/g, "\\'")}', '${item.name.replace(/'/g, "\\'")}')">
+            </td>
+            <td><strong class="report-code">${item.code || 'N/A'}</strong></td>
+            <td>${item.name}</td>
+            <td>${item.category}</td>
+            <td>${item.stock}</td>
+          </tr>
+        `;
+      });
+
+      reportTableBody.innerHTML = html;
+    }
+
+    function generateFloorWiseReport() {
+      currentReportTitle = 'Floor-wise Stock Report';
+      currentReportData = [...inventory];
+      
+      reportTableHead.innerHTML = `
+        <tr>
+          <th>Floor</th>
+          <th>Total Items</th>
+          <th>Total Stock</th>
+        </tr>
+      `;
+
+      let html = '';
+      config.floors.forEach(floor => {
+        const floorItems = inventory.filter(item => item.floor === floor.id);
+        const totalStock = floorItems.reduce((sum, item) => sum + item.stock, 0);
+
+        html += `
+          <tr>
+            <td><strong>${floor.name}</strong></td>
+            <td>${floorItems.length}</td>
+            <td>${totalStock}</td>
+          </tr>
+        `;
+      });
+
+      reportTableBody.innerHTML = html;
+    }
+
+    function generateCategoryWiseReport() {
+      currentReportTitle = 'Category-wise Stock Report';
+      
+      // Get all unique categories
+      const categories = [...new Set(inventory.map(item => item.category))];
+      currentReportData = categories.map(category => {
+        const categoryItems = inventory.filter(item => item.category === category);
+        const totalStock = categoryItems.reduce((sum, item) => sum + item.stock, 0);
+        
+        return {
+          category,
+          itemCount: categoryItems.length,
+          totalStock
+        };
+      });
+      
+      reportTableHead.innerHTML = `
+        <tr>
+          <th>Category</th>
+          <th>Number of Items</th>
+          <th>Total Stock</th>
+        </tr>
+      `;
+
+      if (currentReportData.length === 0) {
+        reportTableBody.innerHTML = `
+          <tr>
+            <td colspan="3" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No items found
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      currentReportData.forEach(data => {
+        html += `
+          <tr>
+            <td><strong>${data.category}</strong></td>
+            <td>${data.itemCount}</td>
+            <td>${data.totalStock}</td>
+          </tr>
+        `;
+      });
+
+      reportTableBody.innerHTML = html;
+    }
+
+    function generateGRNReport() {
+      currentReportTitle = 'GRN Report';
+      currentReportData = [...grnRecords];
+
+      // Apply filters
+      const startDate = document.getElementById('grnReportStartDate').value;
+      const endDate = document.getElementById('grnReportEndDate').value;
+      const supplierFilter = document.getElementById('grnSupplierFilter').value.toLowerCase();
+      const floorFilter = document.getElementById('grnFloorFilter').value;
+      const itemFilter = document.getElementById('grnItemFilter').value.toLowerCase();
+
+      let filteredData = [...grnRecords];
+
+      // Date filter
+      if (startDate && endDate) {
+        filteredData = filteredData.filter(grn => {
+          const grnDate = new Date(grn.date);
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          return grnDate >= start && grnDate <= end;
+        });
+      }
+
+      // Supplier filter
+      if (supplierFilter) {
+        filteredData = filteredData.filter(grn => 
+          grn.supplier.toLowerCase().includes(supplierFilter)
+        );
+      }
+
+      // Floor filter
+      if (floorFilter !== 'all') {
+        filteredData = filteredData.filter(grn => grn.floor === floorFilter);
+      }
+
+      // Item filter
+      if (itemFilter) {
+        filteredData = filteredData.filter(grn => 
+          grn.itemCode.toLowerCase().includes(itemFilter) ||
+          grn.itemName.toLowerCase().includes(itemFilter)
+        );
+      }
+
+      currentReportData = filteredData;
+
+      if (filteredData.length === 0) {
+        grnReportTableBody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No GRN records found for the selected filters
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      filteredData.forEach(grn => {
+        const floorName = config.floors.find(f => f.id === grn.floor)?.name || grn.floor;
+
+        html += `
+          <tr>
+            <td><strong>${grn.id}</strong></td>
+            <td>${grn.date}</td>
+            <td>${grn.supplier}</td>
+            <td>
+              <strong>${grn.itemCode}</strong><br>
+              ${grn.itemName}
+            </td>
+            <td>${floorName}</td>
+            <td>${grn.quantity}</td>
+            <td>${grn.notes || '-'}</td>
+          </tr>
+        `;
+      });
+
+      grnReportTableBody.innerHTML = html;
+    }
+
+    function generateDCReport() {
+      currentReportTitle = 'DC Report';
+      currentReportData = [...dcRecords];
+
+      // Apply filters
+      const startDate = document.getElementById('dcReportStartDate').value;
+      const endDate = document.getElementById('dcReportEndDate').value;
+      const customerFilter = document.getElementById('dcCustomerFilter').value.toLowerCase();
+      const floorFilter = document.getElementById('dcFloorFilter').value;
+      const itemFilter = document.getElementById('dcItemFilter').value.toLowerCase();
+
+      let filteredData = [...dcRecords];
+
+      // Date filter
+      if (startDate && endDate) {
+        filteredData = filteredData.filter(dc => {
+          const dcDate = new Date(dc.date);
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          return dcDate >= start && dcDate <= end;
+        });
+      }
+
+      // Customer filter
+      if (customerFilter) {
+        filteredData = filteredData.filter(dc => 
+          dc.customer.toLowerCase().includes(customerFilter)
+        );
+      }
+
+      // Floor filter
+      if (floorFilter !== 'all') {
+        filteredData = filteredData.filter(dc => dc.floor === floorFilter);
+      }
+
+      // Item filter
+      if (itemFilter) {
+        filteredData = filteredData.filter(dc => 
+          dc.itemCode.toLowerCase().includes(itemFilter) ||
+          dc.itemName.toLowerCase().includes(itemFilter)
+        );
+      }
+
+      currentReportData = filteredData;
+
+      if (filteredData.length === 0) {
+        dcReportTableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              No DC records found for the selected filters
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      filteredData.forEach(dc => {
+        const floorName = config.floors.find(f => f.id === dc.floor)?.name || dc.floor;
+        let dispatchImage = dc.dispatchImage || '';
+
+        html += `
+          <tr>
+            <td><strong>${dc.id}</strong></td>
+            <td>${dc.date}</td>
+            <td>${dc.customer}</td>
+            <td>
+              <strong>${dc.itemCode}</strong><br>
+              ${dc.itemName}
+            </td>
+            <td>${floorName}</td>
+            <td>${dc.quantity}</td>
+            <td>
+              ${dispatchImage ? 
+                `<img src="${dispatchImage}" alt="Dispatch" class="report-image" 
+                     onclick="showBigImage('${dispatchImage.replace(/'/g, "\\'")}', 'Dispatch ${dc.id}')">` : 
+                '-'}
+            </td>
+            <td>${dc.notes || '-'}</td>
+          </tr>
+        `;
+      });
+
+      dcReportTableBody.innerHTML = html;
+    }
+
+    // Utility Functions
+    function getStockClass(stock) {
+      if (stock === 0) return 'stock-out';
+      if (stock < 10) return 'stock-low';
+      if (stock < 50) return 'stock-medium';
+      return 'stock-high';
+    }
+
+    function updateGRNItemDetails() {
+      const select = document.getElementById('grnItem');
+      const selectedOption = select.options[select.selectedIndex];
+      const infoDiv = document.getElementById('grnSelectedItemInfo');
+      
+      if (select.value && selectedOption) {
+        const code = selectedOption.getAttribute('data-code') || 'N/A';
+        const name = selectedOption.getAttribute('data-name');
+        const floor = selectedOption.getAttribute('data-floor');
+        const floorName = config.floors.find(f => f.id === floor)?.name || floor;
+        
+        document.getElementById('grnSelectedItemText').textContent = 
+          `${code} - ${name} - ${floorName}`;
+        infoDiv.style.display = 'block';
+        
+        // Auto-populate floor
+        document.getElementById('grnFloor').value = floor;
+      } else {
+        infoDiv.style.display = 'none';
+      }
+    }
+
+    function updateDCItemDetails() {
+      const select = document.getElementById('dcItem');
+      const selectedOption = select.options[select.selectedIndex];
+      const infoDiv = document.getElementById('dcSelectedItemInfo');
+      
+      if (select.value && selectedOption) {
+        const code = selectedOption.getAttribute('data-code') || 'N/A';
+        const name = selectedOption.getAttribute('data-name');
+        const stock = selectedOption.getAttribute('data-stock');
+        const floor = selectedOption.getAttribute('data-floor');
+        const floorName = config.floors.find(f => f.id === floor)?.name || floor;
+        
+        document.getElementById('dcSelectedItemText').textContent = 
+          `${code} - ${name} - ${floorName}`;
+        document.getElementById('dcAvailableStock').textContent = stock;
+        infoDiv.style.display = 'block';
+        
+        // Auto-populate floor
+        document.getElementById('dcFloor').value = floor;
+      } else {
+        infoDiv.style.display = 'none';
+      }
+    }
+
+    function generateCodeSuggestions() {
+      const name = document.getElementById('itemName').value;
+      const category = document.getElementById('itemCategory').value;
+      const suggestionsDiv = document.getElementById('codeSuggestions');
+      
+      if (!name || !category) {
+        suggestionsDiv.innerHTML = '<small>Enter item name and category to get code suggestions</small>';
+        return;
+      }
+      
+      // Generate suggestions
+      const categoryCode = category.substring(0, 3).toUpperCase();
+      const nameCode = name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
+      const randomCode = categoryCode + '-' + String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+      const nameBasedCode = nameCode + '-' + String(Math.floor(Math.random() * 100)).padStart(2, '0');
+      
+      suggestionsDiv.innerHTML = `
+        <small>Suggestions:</small><br>
+        <button type="button" onclick="useSuggestedCode('${randomCode}')" 
+                style="margin: 2px; padding: 4px 8px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+          ${randomCode}
+        </button>
+        <button type="button" onclick="useSuggestedCode('${nameBasedCode}')" 
+                style="margin: 2px; padding: 4px 8px; background: var(--info-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+          ${nameBasedCode}
+        </button>
+      `;
+    }
+
+    function useSuggestedCode(code) {
+      document.getElementById('itemCode').value = code;
+      document.getElementById('codeSuggestions').innerHTML = 
+        `<small>Using code: <strong>${code}</strong></small>`;
+    }
+
+    function editItem(id) {
+      const item = inventory.find(i => i.id === id);
+      if (!item) return;
+      
+      // Store the original item for editing
+      currentEditItemId = id;
+      
+      // Populate the add item form with existing data
+      document.getElementById('itemCode').value = item.code || '';
+      document.getElementById('itemName').value = item.name;
+      document.getElementById('itemCategory').value = item.category;
+      document.getElementById('itemFloor').value = item.floor;
+      document.getElementById('itemStock').value = item.stock;
+      document.getElementById('itemDescription').value = item.description || '';
+      
+      // Handle image
+      uploadedImageUrl = null;
+      
+      if (item.image && item.image !== settings.defaultImage) {
+        if (item.image.startsWith('http') || item.image.startsWith('data:')) {
+          imagePreview.src = item.image;
+          uploadedImageUrl = item.image;
+          imagePreviewContainer.style.display = 'block';
+          isUsingUrlForItem = false;
+          imageDropZone.style.display = 'block';
+          imageUrlSection.style.display = 'none';
+          localStorageInfo.style.display = 'block';
+        }
+      } else {
+        // No image or default image
+        imagePreviewContainer.style.display = 'none';
+        isUsingUrlForItem = false;
+        imageDropZone.style.display = 'block';
+        imageUrlSection.style.display = 'none';
+        localStorageInfo.style.display = 'none';
+      }
+      
+      // Update toggle button text
+      toggleImageSourceBtn.innerHTML = isUsingUrlForItem ? 
+        '<i class="fas fa-exchange-alt"></i> Switch to File Upload' : 
+        '<i class="fas fa-exchange-alt"></i> Switch to URL Input';
+      
+      // Change form title
+      document.querySelector('#addItemModal .modal-title').innerHTML = 
+        '<i class="fas fa-edit"></i> Edit Item';
+      
+      // Show the modal
+      addItemModal.classList.add('active');
+    }
+
+  async function deleteItem(id) {
+  if (!confirm('Are you sure you want to delete this item?')) {
+    return;
+  }
+  
+  showLoading('Deleting item...');
+  
+  const itemIndex = inventory.findIndex(i => i.id === id);
+  if (itemIndex === -1) {
+    hideLoading();
+    return;
+  }
+  
+  try {
+    // Remove from inventory array
+    inventory.splice(itemIndex, 1);
+    
+    // Delete from Firebase if available
+    await deleteFromFirebase('inventory', id);
+    
+    // Save to localStorage
+    localStorage.setItem('inventory', JSON.stringify(inventory));
+    
+    // Update UI
+    renderInventoryTable();
+    updateDashboard();
+    
+    showToast('Item deleted successfully', 'success');
+    
+  } catch (error) {
+    console.error('Error deleting item:', error);
+    showToast('Item deleted locally (Firebase sync failed)', 'warning');
+    
+    // Still update UI even if Firebase fails
+    renderInventoryTable();
+    updateDashboard();
+  } finally {
+    hideLoading();
+  }
+}
+async function deleteFromFirebase(collectionName, docId) {
+  try {
+    if (!firebaseInitialized || !db || !isOnline) {
+      console.log("Firebase not available, skipping delete");
+      return false;
+    }
+    
+    await db.collection(collectionName).doc(docId).delete();
+    console.log(`Deleted ${docId} from ${collectionName} collection`);
+    return true;
+  } catch (error) {
+    console.error(`Error deleting from ${collectionName}:`, error);
+    return false;
+  }
+}
+
+    function showBigImage(src, title) {
+      bigImage.src = src;
+      bigImageTitle.textContent = title;
+      bigImageModal.classList.add('active');
+    }
+
+    function closeAllModals() {
+      addItemModal.classList.remove('active');
+      createGRNModal.classList.remove('active');
+      createDCModal.classList.remove('active');
+      bigImageModal.classList.remove('active');
+    }
+
+    // Export Functions
+    function exportSimpleExcel() {
+      try {
+        // Create a simple workbook with limited text length
+        const data = inventory.map(item => ({
+          'Code': item.code || 'N/A',
+          'Name': item.name.substring(0, 50),
+          'Category': item.category,
+          'Floor': config.floors.find(f => f.id === item.floor)?.name || item.floor,
+          'Stock': item.stock
+        }));
+        
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+        XLSX.writeFile(wb, 'inventory_simple.xlsx');
+        
+        showToast('Simple Excel export completed', 'success');
+      } catch (error) {
+        console.error('Simple export error:', error);
+        showToast('Error: ' + error.message, 'error');
+      }
+    }
+
+    function exportData() {
+      const ws = XLSX.utils.json_to_sheet(inventory.map(item => ({
+        'Item Code': item.code || '',
+        'Item Name': item.name.substring(0, 100),
+        'Category': item.category,
+        'Floor': config.floors.find(f => f.id === item.floor)?.name || item.floor,
+        'Stock': item.stock,
+        'Description': (item.description || '').substring(0, 200),
+        'Image URL': (item.image || '').substring(0, 255)
+      })));
+      
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+      XLSX.writeFile(wb, 'inventory_data.xlsx');
+      showToast('Inventory exported to Excel', 'success');
+    }
+
+    function exportCurrentReport() {
+      if (!currentReportData || currentReportData.length === 0) {
+        showToast('No data to export', 'warning');
+        return;
+      }
+      
+      let ws;
+      switch (currentReportTab) {
+        case 'grn-reports':
+          ws = XLSX.utils.json_to_sheet(currentReportData.map(grn => ({
+            'GRN No': grn.id,
+            'Date': grn.date,
+            'Supplier': grn.supplier,
+            'Item Code': grn.itemCode,
+            'Item Name': grn.itemName,
+            'Floor': config.floors.find(f => f.id === grn.floor)?.name || grn.floor,
+            'Quantity': grn.quantity,
+            'Notes': grn.notes || ''
+          })));
+          break;
+        case 'dc-reports':
+          ws = XLSX.utils.json_to_sheet(currentReportData.map(dc => ({
+            'DC No': dc.id,
+            'Date': dc.date,
+            'Customer': dc.customer,
+            'Item Code': dc.itemCode,
+            'Item Name': dc.itemName,
+            'Floor': config.floors.find(f => f.id === dc.floor)?.name || dc.floor,
+            'Quantity': dc.quantity,
+            'Notes': dc.notes || ''
+          })));
+          break;
+        default:
+          ws = XLSX.utils.json_to_sheet(currentReportData.map(item => ({
+            'Item Code': item.code || '',
+            'Item Name': item.name.substring(0, 100),
+            'Category': item.category,
+            'Floor': config.floors.find(f => f.id === item.floor)?.name || item.floor,
+            'Stock': item.stock,
+            'Image URL': (item.image || '').substring(0, 255)
+          })));
+          break;
+      }
+      
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, currentReportTitle);
+      XLSX.writeFile(wb, `${currentReportTitle.replace(/\s+/g, '_')}.xlsx`);
+      showToast(`${currentReportTitle} exported to Excel`, 'success');
+    }
+
+    function exportTransactions() {
+      const ws = XLSX.utils.json_to_sheet(transactions.map(t => ({
+        'ID': t.id,
+        'Type': t.type,
+        'Date': t.date,
+        'Item Code': t.itemCode,
+        'Item Name': t.itemName,
+        'Floor': config.floors.find(f => f.id === t.floor)?.name || t.floor,
+        'Quantity': t.quantity,
+        'Party': t.party,
+        'Created At': new Date(t.createdAt).toLocaleString()
+      })));
+      
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
+      XLSX.writeFile(wb, 'transactions.xlsx');
+      showToast('Transactions exported to Excel', 'success');
+    }
+
+    function exportFloorSummary() {
+      const data = config.floors.map(floor => {
+        const floorItems = inventory.filter(item => item.floor === floor.id);
+        const totalStock = floorItems.reduce((sum, item) => sum + item.stock, 0);
+        
+        return {
+          'Floor': floor.name,
+          'Total Items': floorItems.length,
+          'Total Stock': totalStock
+        };
+      });
+      
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Floor Summary');
+      XLSX.writeFile(wb, 'floor_summary.xlsx');
+      showToast('Floor summary exported to Excel', 'success');
+    }
+
+    function exportRecentActivity() {
+      const recentTransactions = [...transactions]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 20);
+      
+      const ws = XLSX.utils.json_to_sheet(recentTransactions.map(t => ({
+        'Time': new Date(t.createdAt).toLocaleTimeString(),
+        'Type': t.type,
+        'Item': t.itemName,
+        'Floor': config.floors.find(f => f.id === t.floor)?.name || t.floor,
+        'Quantity': t.quantity,
+        'Party': t.party,
+        'Date': t.date
+      })));
+      
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Recent Activity');
+      XLSX.writeFile(wb, 'recent_activity.xlsx');
+      showToast('Recent activity exported to Excel', 'success');
+    }
+    
+    function exportDataWithImages(floor = 'all') {
+      try {
+        // Filter items based on floor if specified
+        let itemsToExport = inventory;
+        let reportTitle = 'Inventory Report with Images';
+        let fileName = 'inventory_report_with_images.html';
+        
+        if (floor !== 'all') {
+          itemsToExport = inventory.filter(item => item.floor === floor);
+          const floorName = config.floors.find(f => f.id === floor)?.name || floor;
+          reportTitle = `${floorName} Inventory Report`;
+          fileName = `${floorName.replace(/\s+/g, '_')}_inventory_report.html`;
+          
+          if (itemsToExport.length === 0) {
+            showToast(`No items found in ${floorName}`, 'warning');
+            return;
+          }
+        }
+        
+        const htmlContent = createHTMLExportWithImages(itemsToExport, reportTitle, floor);
+        
+        // Create a blob and download
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        const floorMsg = floor === 'all' ? '' : ` (${config.floors.find(f => f.id === floor)?.name})`;
+        showToast(`Inventory report${floorMsg} exported as HTML`, 'success');
+        
+      } catch (error) {
+        console.error('Export error:', error);
+        showToast('Error exporting with images', 'error');
+      }
+    }
+
+    function createHTMLExportWithImages(items = null, customTitle = '', floor = 'all') {
+      // Use provided items or all inventory
+      const itemsToExport = items || inventory;
+      const today = new Date().toLocaleDateString();
+      const time = new Date().toLocaleTimeString();
+      
+      // Determine title
+      let title = customTitle || 'Inventory Report with Images';
+      let floorInfo = '';
+      
+      if (floor !== 'all') {
+        const floorName = config.floors.find(f => f.id === floor)?.name || floor;
+        floorInfo = `<div class="floor-info">Floor: ${floorName}</div>`;
+      }
+      
+      let html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>${title} - ${settings.companyName}</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            color: #333;
+            line-height: 1.6;
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1a365d;
+        }
+        .company-name {
+            color: #1a365d;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        .report-title {
+            color: #2d3748;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        .floor-info {
+            color: #3182ce;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 8px;
+            background: #ebf8ff;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .report-info {
+            color: #4a5568;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        th { 
+            background-color: #1a365d; 
+            color: white; 
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #2d3748;
+        }
+        td { 
+            border: 1px solid #ddd; 
+            padding: 12px 15px; 
+            text-align: left;
+            vertical-align: top;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+        .image-cell { 
+            text-align: center; 
+            width: 100px;
+        }
+        .item-image { 
+            max-width: 80px; 
+            max-height: 80px; 
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stock-low { color: #e53e3e; font-weight: bold; }
+        .stock-medium { color: #d69e2e; font-weight: bold; }
+        .stock-high { color: #38a169; font-weight: bold; }
+        .stock-out { color: #a0aec0; font-weight: bold; }
+        .summary {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #3182ce;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 12px;
+        }
+        @media print {
+            .no-print { display: none; }
+            body { margin: 0; }
+            table { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-name">${settings.companyName}</div>
+        <div class="report-title">${title}</div>
+        ${floorInfo}
+        <div class="report-info">
+            Generated on: ${today} at ${time} | Total Items: ${itemsToExport.length}
+        </div>
+    </div>
+    
+    <div class="summary">
+        <h3>Summary</h3>
+        <p><strong>Total Items:</strong> ${itemsToExport.length}</p>
+        <p><strong>Total Stock:</strong> ${itemsToExport.reduce((sum, item) => sum + item.stock, 0)} units</p>
+        <p><strong>Categories:</strong> ${[...new Set(itemsToExport.map(item => item.category))].join(', ')}</p>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Image</th>
+                <th>Item Code</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Floor</th>
+                <th>Stock</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+`;
+  
+      itemsToExport.forEach((item, index) => {
+        const floorName = config.floors.find(f => f.id === item.floor)?.name || item.floor;
+        let imageUrl = item.image || settings.defaultImage;
+        
+        // Stock status styling
+        let stockClass = '';
+        if (item.stock === 0) stockClass = 'stock-out';
+        else if (item.stock < 10) stockClass = 'stock-low';
+        else if (item.stock < 50) stockClass = 'stock-medium';
+        else stockClass = 'stock-high';
+        
+        html += `
+            <tr>
+                <td>${index + 1}</td>
+                <td class="image-cell">
+                    <img src="${imageUrl}" 
+                         alt="${item.name}" 
+                         class="item-image"
+                         onerror="this.src='${settings.defaultImage}'">
+                </td>
+                <td><strong>${item.code || 'N/A'}</strong></td>
+                <td>${item.name}</td>
+                <td>${item.category}</td>
+                <td>${floorName}</td>
+                <td class="${stockClass}">${item.stock} units</td>
+                <td>${item.description || '-'}</td>
+            </tr>
+`;
+      });
+  
+      html += `
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        <p>Report generated by Outlet Stock Management System</p>
+        <p class="no-print">
+            <button onclick="window.print()" style="padding: 8px 16px; background: #1a365d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Print Report
+            </button>
+        </p>
+    </div>
+    
+    <script>
+        // Add print functionality
+        function printReport() {
+            window.print();
+        }
+        
+        // Handle image errors
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.item-image');
+            images.forEach(img => {
+                img.onerror = function() {
+                    this.src = '${settings.defaultImage}';
+                };
+            });
+        });
+  `;
+  
+      return html;
+    }
+
+    async function exportFullReport() {
+      try {
+        showToast('Creating full report...', 'info');
+        
+        // Check if JSZip is available
+        if (typeof JSZip === 'undefined') {
+          throw new Error('JSZip library not loaded. Using alternative export.');
+        }
+        
+        const zip = new JSZip();
+        
+        // 1. Create Excel file (without images)
+        const ws = XLSX.utils.json_to_sheet(inventory.map(item => {
+          return {
+            'Item Code': item.code || 'N/A',
+            'Item Name': item.name.substring(0, 100),
+            'Category': item.category,
+            'Floor': config.floors.find(f => f.id === item.floor)?.name || item.floor,
+            'Stock': item.stock,
+            'Description': (item.description || '').substring(0, 200),
+            'Image URL': (item.image || '').substring(0, 255)
+          };
+        }));
+        
+        // Set column widths
+        const wscols = [
+          {wch: 15},
+          {wch: 25},
+          {wch: 15},
+          {wch: 15},
+          {wch: 10},
+          {wch: 30},
+          {wch: 40}
+        ];
+        ws['!cols'] = wscols;
+        
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+        const excelData = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        zip.file('inventory_data.xlsx', excelData);
+        
+        // 2. Create HTML reports for each floor
+        // All floors report
+        zip.file('inventory_all_floors.html', createHTMLExportWithImages(inventory, 'Complete Inventory Report', 'all'));
+        
+        // Ground Floor
+        const groundItems = inventory.filter(item => item.floor === 'ground');
+        if (groundItems.length > 0) {
+          zip.file('inventory_ground_floor.html', createHTMLExportWithImages(groundItems, 'Ground Floor Inventory Report', 'ground'));
+        }
+        
+        // 1st Floor
+        const firstItems = inventory.filter(item => item.floor === 'first');
+        if (firstItems.length > 0) {
+          zip.file('inventory_1st_floor.html', createHTMLExportWithImages(firstItems, '1st Floor Inventory Report', 'first'));
+        }
+        
+        // 4th Floor
+        const fourthItems = inventory.filter(item => item.floor === 'fourth');
+        if (fourthItems.length > 0) {
+          zip.file('inventory_4th_floor.html', createHTMLExportWithImages(fourthItems, '4th Floor Inventory Report', 'fourth'));
+        }
+        
+        // 5th Floor
+        const fifthItems = inventory.filter(item => item.floor === 'fifth');
+        if (fifthItems.length > 0) {
+          zip.file('inventory_5th_floor.html', createHTMLExportWithImages(fifthItems, '5th Floor Inventory Report', 'fifth'));
+        }
+        
+        // 3. Generate and download ZIP
+        const content = await zip.generateAsync({ type: 'blob' });
+        saveAs(content, `inventory_full_report_${Date.now()}.zip`);
+        
+        showToast('Full report exported as ZIP file (includes all floors)', 'success');
+        
+      } catch (error) {
+        console.error('Export error:', error);
+        
+        // Fallback: Export as HTML only
+        if (error.message.includes('JSZip')) {
+          showToast('Using fallback export (HTML only)', 'warning');
+          exportDataWithImages('all');
+        } else {
+          showToast('Error creating report: ' + error.message, 'error');
+        }
+      }
+    }
+
+    function printCurrentReport() {
+      window.print();
+    }
+
+    function loadSettings() {
+      const savedSettings = localStorage.getItem('stockSettings');
+      if (savedSettings) {
+        try {
+          settings = JSON.parse(savedSettings);
+          
+          // Apply settings to UI
+          document.getElementById('companyName').value = settings.companyName;
+          document.getElementById('grnPrefix').value = settings.grnPrefix;
+          document.getElementById('dcPrefix').value = settings.dcPrefix;
+          document.getElementById('defaultImage').value = settings.defaultImage;
+        } catch (e) {
+          console.error("Error loading settings:", e);
+        }
+      }
+    }
+
+    function saveSettings() {
+      settings.companyName = document.getElementById('companyName').value;
+      settings.grnPrefix = document.getElementById('grnPrefix').value;
+      settings.dcPrefix = document.getElementById('dcPrefix').value;
+      settings.defaultImage = document.getElementById('defaultImage').value || config.defaultImage;
+      
+      localStorage.setItem('stockSettings', JSON.stringify(settings));
+      showToast('Settings saved successfully', 'success');
+    }
+
+    function resetSettings() {
+      if (confirm('Are you sure you want to reset all settings to default?')) {
+        settings = {
+          companyName: 'Outlet Stock Management',
+          grnPrefix: 'GRN',
+          dcPrefix: 'DC',
+          defaultImage: config.defaultImage
+        };
+        
+        localStorage.removeItem('stockSettings');
+        
+        // Reset UI
+        document.getElementById('companyName').value = settings.companyName;
+        document.getElementById('grnPrefix').value = settings.grnPrefix;
+        document.getElementById('dcPrefix').value = settings.dcPrefix;
+        document.getElementById('defaultImage').value = settings.defaultImage;
+        
+        showToast('Settings reset to default', 'info');
+      }
+    }
+
+    function showToast(message, type = 'info') {
+      // Set toast content and style
+      toastMessage.textContent = message;
+      
+      // Set icon based on type
+      let icon = 'fa-info-circle';
+      if (type === 'success') icon = 'fa-check-circle';
+      if (type === 'error') icon = 'fa-times-circle';
+      if (type === 'warning') icon = 'fa-exclamation-triangle';
+      
+      toastIcon.className = `fas ${icon} toast-icon`;
+      
+      // Set toast class for styling
+      toast.className = 'toast';
+      toast.classList.add(`toast-${type}`);
+      
+      // Show toast
+      toast.classList.add('show');
+      
+      // Auto-hide after 3 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    function showLoading(message = 'Processing...') {
+      const overlay = document.getElementById('loadingOverlay');
+      const text = document.getElementById('loadingText');
+      if (overlay && text) {
+        text.textContent = message;
+        overlay.classList.add('active');
+      }
+    }
+
+    function hideLoading() {
+      const overlay = document.getElementById('loadingOverlay');
+      if (overlay) {
+        overlay.classList.remove('active');
+      }
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+    
+  </script>
+</body>
+</html>
