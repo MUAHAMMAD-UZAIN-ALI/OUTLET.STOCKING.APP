@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -177,7 +178,34 @@
       gap: 20px;
       width: 100%;
     }
+/* Excel Import Styles */
+#excelPreviewTable {
+  min-width: 800px;
+}
 
+#excelPreviewTable th {
+  font-size: 12px;
+  padding: 10px;
+}
+
+#excelPreviewTable td {
+  font-size: 12px;
+  padding: 10px;
+}
+
+#importLog {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+#importLog div {
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#importLog div:last-child {
+  border-bottom: none;
+}
     .header-left {
       display: flex;
       align-items: center;
@@ -342,6 +370,7 @@
         opacity: 0;
         transform: translateY(10px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -1038,12 +1067,14 @@
 
     /* Print Styles */
     @media print {
+
       .app-container,
       .main-content,
       .table-card {
         background-color: white !important;
         color: black !important;
       }
+
       .sidebar,
       .header,
       .table-header,
@@ -1057,23 +1088,28 @@
       .report-tabs {
         display: none !important;
       }
+
       .main-content {
         margin-left: 0 !important;
         padding: 0 !important;
       }
+
       .table-card {
         border: 1px solid #000 !important;
         box-shadow: none !important;
       }
+
       .data-table {
         color: black !important;
         border: 1px solid #000 !important;
       }
+
       .data-table th,
       .data-table td {
         border: 1px solid #000 !important;
         color: black !important;
       }
+
       .stat-card {
         border: 1px solid #000 !important;
         color: black !important;
@@ -1086,17 +1122,21 @@
         transform: translateX(-100%);
         width: 280px;
       }
+
       .sidebar.active {
         transform: translateX(0);
       }
+
       .main-content {
         margin-left: 0;
         width: 100%;
         padding: 20px;
       }
+
       .menu-toggle {
         display: block;
       }
+
       .table-card {
         padding: 20px;
       }
@@ -1108,34 +1148,41 @@
         align-items: flex-start;
         gap: 15px;
       }
+
       .search-container {
         max-width: 100%;
         width: 100%;
         order: 3;
       }
+
       .user-actions {
         width: 100%;
         justify-content: space-between;
         order: 2;
         gap: 8px;
       }
+
       .user-actions .btn {
         flex: 1;
         min-width: 140px;
         justify-content: center;
         padding: 10px 16px;
       }
+
       .form-grid {
         grid-template-columns: 1fr;
         gap: 15px;
       }
+
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
       }
+
       .stat-card {
         padding: 20px;
       }
+
       .stat-value {
         font-size: 32px;
       }
@@ -1145,48 +1192,61 @@
       .main-content {
         padding: 15px;
       }
+
       .stats-grid {
         grid-template-columns: 1fr;
       }
+
       .table-card {
         padding: 15px;
       }
+
       .btn {
         padding: 10px 16px;
         font-size: 13px;
       }
+
       .user-actions .btn {
         padding: 8px 12px;
       }
+
       .modal-content {
         padding: 20px;
         margin: 10px;
       }
+
       .data-table th,
       .data-table td {
         padding: 12px 8px;
         font-size: 13px;
       }
+
       .data-table td {
         word-break: break-word;
       }
+
       .report-tabs {
         flex-direction: column;
         align-items: stretch;
       }
+
       .report-tab {
         width: 100%;
         text-align: center;
       }
+
       .section-title {
         font-size: 18px;
       }
+
       .page-title {
         font-size: 20px;
       }
+
       .stat-value {
         font-size: 28px;
       }
+
       .stat-icon {
         width: 50px;
         height: 50px;
@@ -1198,67 +1258,83 @@
       .main-content {
         padding: 12px;
       }
+
       .stat-value {
         font-size: 24px;
       }
+
       .stat-card {
         padding: 15px;
       }
+
       .table-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
       }
+
       .table-actions {
         width: 100%;
         justify-content: space-between;
         gap: 8px;
       }
+
       .table-actions .btn,
       .table-actions select,
       .table-actions input {
         flex: 1;
         min-width: 120px;
       }
+
       .form-actions {
         flex-direction: column;
         gap: 10px;
       }
+
       .form-actions .btn {
         width: 100%;
         justify-content: center;
       }
+
       .user-actions {
         flex-wrap: nowrap;
         overflow-x: auto;
         padding-bottom: 5px;
       }
+
       .user-actions .btn {
         min-width: 120px;
         white-space: nowrap;
       }
+
       .action-buttons {
         justify-content: center;
       }
+
       .floor-filter {
         justify-content: center;
       }
+
       .report-controls {
         justify-content: center;
       }
+
       .modal-content {
         padding: 15px;
       }
+
       .toast {
         left: 10px;
         right: 10px;
         bottom: 10px;
         max-width: none;
       }
+
       .item-image {
         width: 50px;
         height: 50px;
       }
+
       .item-image:hover {
         transform: scale(2);
       }
@@ -1270,43 +1346,55 @@
         align-items: flex-start;
         gap: 10px;
       }
+
       .page-title {
         font-size: 18px;
       }
+
       .stats-grid {
         gap: 10px;
       }
+
       .stat-card {
         padding: 15px 12px;
       }
+
       .stat-value {
         font-size: 20px;
       }
+
       .table-card {
         padding: 12px;
       }
+
       .data-table th,
       .data-table td {
         padding: 8px 6px;
         font-size: 12px;
       }
+
       .btn {
         padding: 8px 12px;
         font-size: 12px;
       }
+
       .nav-link {
         padding: 12px 15px;
         font-size: 14px;
       }
+
       .logo-text {
         font-size: 18px;
       }
+
       .logo-subtext {
         font-size: 10px;
       }
+
       .user-actions {
         gap: 6px;
       }
+
       .user-actions .btn {
         min-width: 100px;
         padding: 6px 8px;
@@ -1317,32 +1405,39 @@
       .stats-grid {
         grid-template-columns: 1fr;
       }
+
       .user-actions {
         flex-direction: column;
         gap: 5px;
       }
+
       .user-actions .btn {
         width: 100%;
         min-width: auto;
       }
+
       .table-actions {
         flex-direction: column;
         align-items: stretch;
       }
+
       .table-actions .btn,
       .table-actions select,
       .table-actions input {
         width: 100%;
         margin-bottom: 5px;
       }
+
       .floor-filter-btn {
         padding: 6px 12px;
         font-size: 12px;
       }
+
       .report-tab {
         padding: 8px 12px;
         font-size: 13px;
       }
+
       .section-title {
         font-size: 16px;
       }
@@ -1370,6 +1465,7 @@
 
     /* Touch-friendly improvements */
     @media (hover: none) and (pointer: coarse) {
+
       .btn,
       .action-btn,
       .floor-filter-btn,
@@ -1378,18 +1474,22 @@
         min-height: 44px;
         min-width: 44px;
       }
+
       .search-bar,
       .form-control,
       select.form-control {
         font-size: 16px;
         min-height: 44px;
       }
+
       .item-image:hover {
         transform: none;
       }
+
       .action-buttons {
         gap: 4px;
       }
+
       .action-btn {
         width: 44px;
         height: 44px;
@@ -1398,6 +1498,7 @@
 
     /* Prevent text selection on mobile */
     @media (max-width: 768px) {
+
       .btn,
       .action-btn,
       .floor-filter-btn,
@@ -1484,7 +1585,7 @@
     .export-options button:last-child {
       border-radius: 0 0 6px 6px;
     }
-    
+
     /* Loading Overlay */
     .loading-overlay {
       position: fixed;
@@ -1589,6 +1690,10 @@
           <button class="btn btn-primary" id="addItemBtn">
             <i class="fas fa-plus"></i>
             <span>Add Item</span>
+          </button>
+          <button class="btn btn-info" id="importBtn">
+            <i class="fas fa-file-import"></i>
+            <span>Import Excel</span>
           </button>
           <button class="btn btn-success" onclick="showCreateGRNModal()">
             <i class="fas fa-arrow-circle-down"></i>
@@ -2079,8 +2184,8 @@
           </div>
           <div class="form-group">
             <label for="itemName">Item Name *</label>
-            <input type="text" id="itemName" class="form-control" required
-              placeholder="e.g., Executive Office Chair" oninput="generateCodeSuggestions()">
+            <input type="text" id="itemName" class="form-control" required placeholder="e.g., Executive Office Chair"
+              oninput="generateCodeSuggestions()">
           </div>
           <div class="form-group">
             <label for="itemCategory">Category *</label>
@@ -2112,23 +2217,21 @@
           </div>
           <div class="form-group full-width">
             <label for="itemImage">Item Image</label>
-            
+
             <!-- Image Upload Section -->
             <div class="image-upload-container" id="imageDropZone"
-                 onclick="document.getElementById('imageInput').click()"
-                 ondragover="handleDragOver(event)"
-                 ondragleave="handleDragLeave(event)"
-                 ondrop="handleImageDrop(event)">
+              onclick="document.getElementById('imageInput').click()" ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)" ondrop="handleImageDrop(event)">
               <i class="fas fa-cloud-upload-alt image-upload-icon"></i>
               <p class="image-upload-text">Drag & drop your image here</p>
               <p class="image-upload-subtext">or click to browse files (Max: 5MB, JPG/PNG/WebP)</p>
               <div class="image-upload-button">
                 Browse Images
               </div>
-              <input type="file" id="imageInput" accept="image/jpeg,image/png,image/jpg,image/webp" 
-                     style="display: none;" onchange="handleImageSelect(event)">
+              <input type="file" id="imageInput" accept="image/jpeg,image/png,image/jpg,image/webp"
+                style="display: none;" onchange="handleImageSelect(event)">
             </div>
-            
+
             <!-- Upload Progress -->
             <div class="upload-progress" id="uploadProgress">
               <div class="progress-bar">
@@ -2136,7 +2239,7 @@
               </div>
               <div class="progress-text" id="progressText">Uploading...</div>
             </div>
-            
+
             <!-- Image Preview -->
             <div class="image-preview-container" id="imagePreviewContainer">
               <img id="imagePreview" class="image-preview" src="" alt="Image Preview">
@@ -2144,23 +2247,23 @@
                 <i class="fas fa-trash"></i> Remove Image
               </button>
             </div>
-            
+
             <!-- Image URL Input -->
             <div class="image-url-section" id="imageUrlSection">
               <label for="itemImageUrl">Or enter image URL</label>
-              <input type="text" id="itemImageUrl" class="form-control"
-                     placeholder="https://example.com/image.jpg">
+              <input type="text" id="itemImageUrl" class="form-control" placeholder="https://example.com/image.jpg">
             </div>
-            
+
             <!-- Toggle between upload and URL -->
             <div style="margin-top: 10px; text-align: center;">
               <button type="button" class="btn btn-sm btn-info" onclick="toggleImageSource()" id="toggleImageSourceBtn">
                 <i class="fas fa-exchange-alt"></i> Switch to URL Input
               </button>
             </div>
-            
+
             <!-- Local storage info -->
-            <div id="localStorageInfo" style="margin-top: 10px; font-size: 12px; color: var(--text-muted); display: none;">
+            <div id="localStorageInfo"
+              style="margin-top: 10px; font-size: 12px; color: var(--text-muted); display: none;">
               <i class="fas fa-info-circle"></i> Image saved locally
             </div>
           </div>
@@ -2183,7 +2286,136 @@
       </form>
     </div>
   </div>
+  <!-- Import Excel Modal -->
+  <div class="modal" id="importExcelModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas fa-file-excel"></i>
+          Import Excel File
+        </h3>
+        <button class="modal-close" id="closeImportModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="importForm">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Upload Excel File</label>
+            <div class="image-upload-container" id="excelDropZone"
+              onclick="document.getElementById('excelInput').click()" ondragover="handleExcelDragOver(event)"
+              ondragleave="handleExcelDragLeave(event)" ondrop="handleExcelDrop(event)">
+              <i class="fas fa-file-excel image-upload-icon" style="color: #217346;"></i>
+              <p class="image-upload-text">Drag & drop your Excel file here</p>
+              <p class="image-upload-subtext">or click to browse files (.xlsx, .xls)</p>
+              <div class="image-upload-button">
+                Browse Excel File
+              </div>
+              <input type="file" id="excelInput" accept=".xlsx,.xls,.csv" style="display: none;"
+                onchange="handleExcelSelect(event)">
+            </div>
 
+            <div class="upload-progress" id="excelUploadProgress" style="display: none;">
+              <div class="progress-bar">
+                <div class="progress-fill" id="excelProgressFill"></div>
+              </div>
+              <div class="progress-text" id="excelProgressText">Processing...</div>
+            </div>
+
+            <!-- File info -->
+            <div id="excelFileInfo" style="margin-top: 15px; display: none;">
+              <div style="background: rgba(0,0,0,0.1); padding: 15px; border-radius: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <h4 style="margin-bottom: 5px;" id="excelFileName"></h4>
+                    <small id="excelFileSize"></small>
+                  </div>
+                  <button type="button" class="image-remove-btn" onclick="removeExcelFile()">
+                    <i class="fas fa-trash"></i> Remove
+                  </button>
+                </div>
+                <div style="margin-top: 10px; font-size: 12px;">
+                  <strong>Format Requirements:</strong>
+                  <ul style="margin: 5px 0 0 15px;">
+                    <li>Required columns: Item Code, Item Name, Category, Floor, Stock</li>
+                    <li>Optional: Description, Image URL</li>
+                    <li>Floor format: "4th Floor", "Ground Floor", etc.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Import Options -->
+          <div class="form-group">
+            <label>Import Mode</label>
+            <select id="importMode" class="form-control">
+              <option value="add">Add New Items Only</option>
+              <option value="update">Update Existing Items</option>
+              <option value="replace">Replace All Items</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Default Image for Missing</label>
+            <input type="text" id="defaultImportImage" class="form-control"
+              value="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMxYTM2NWQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+SXRlbSBJbWFnZTwvdGV4dD48L3N2Zz4=">
+          </div>
+
+          <!-- Preview Section -->
+          <div class="form-group full-width">
+            <label>Preview (First 5 rows)</label>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="data-table" id="excelPreviewTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Item Code</th>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Floor</th>
+                    <th>Stock</th>
+                    <th>Image</th>
+                  </tr>
+                </thead>
+                <tbody id="excelPreviewBody">
+                  <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                      No file selected
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="excelStats" style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">
+              <small>Total rows: 0 | Valid rows: 0 | Errors: 0</small>
+            </div>
+          </div>
+
+          <!-- Import Log -->
+          <div class="form-group full-width">
+            <label>Import Log</label>
+            <div style="background: var(--dark-bg); border: 1px solid var(--border-color); 
+                      border-radius: 6px; padding: 10px; max-height: 150px; overflow-y: auto; 
+                      font-family: monospace; font-size: 12px;" id="importLog">
+              <div>Ready to import...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" id="cancelImport">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+          <button type="button" class="btn btn-success" id="startImportBtn" disabled>
+            <i class="fas fa-upload"></i>
+            Start Import
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Create GRN Modal -->
   <div class="modal" id="createGRNModal">
     <div class="modal-content">
@@ -2200,8 +2432,7 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="grnSupplier">Supplier Name *</label>
-            <input type="text" id="grnSupplier" class="form-control" required
-              placeholder="Enter supplier name">
+            <input type="text" id="grnSupplier" class="form-control" required placeholder="Enter supplier name">
           </div>
           <div class="form-group">
             <label for="grnDate">Date *</label>
@@ -2246,8 +2477,7 @@
           </div>
           <div class="form-group full-width">
             <label for="grnNotes">Notes</label>
-            <textarea id="grnNotes" class="form-control" rows="2"
-              placeholder="Additional notes..."></textarea>
+            <textarea id="grnNotes" class="form-control" rows="2" placeholder="Additional notes..."></textarea>
           </div>
         </div>
         <div class="form-actions">
@@ -2280,8 +2510,7 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="dcCustomer">Customer Name *</label>
-            <input type="text" id="dcCustomer" class="form-control" required
-              placeholder="Enter customer name">
+            <input type="text" id="dcCustomer" class="form-control" required placeholder="Enter customer name">
           </div>
           <div class="form-group">
             <label for="dcDate">Date *</label>
@@ -2296,8 +2525,7 @@
                   placeholder="Search items by code, name, or category..."
                   style="padding: 8px 16px 8px 35px; font-size: 14px;">
               </div>
-              <select id="dcItem" class="form-control" required style="height: 150px;"
-                onchange="updateDCItemDetails()">
+              <select id="dcItem" class="form-control" required style="height: 150px;" onchange="updateDCItemDetails()">
                 <option value="">Select Item</option>
                 <!-- Items will be populated dynamically -->
               </select>
@@ -2329,17 +2557,15 @@
           <div class="form-group full-width">
             <label for="dcDispatchImage">Dispatch Item Image</label>
             <div class="image-upload-container" id="dcImageDropZone"
-              onclick="document.getElementById('dcImageInput').click()" 
-              ondragover="handleDCDragOver(event)"
-              ondragleave="handleDCDragLeave(event)"
-              ondrop="handleDCDragDrop(event)">
+              onclick="document.getElementById('dcImageInput').click()" ondragover="handleDCDragOver(event)"
+              ondragleave="handleDCDragLeave(event)" ondrop="handleDCDragDrop(event)">
               <i class="fas fa-cloud-upload-alt image-upload-icon"></i>
               <p class="image-upload-text">Click to upload or drag & drop</p>
               <p class="image-upload-subtext">Upload image of packed/dispatched item (Max: 5MB)</p>
-              <input type="file" id="dcImageInput" accept="image/jpeg,image/png,image/jpg,image/webp" 
-                     style="display: none;" onchange="handleDCImageSelect(event)">
+              <input type="file" id="dcImageInput" accept="image/jpeg,image/png,image/jpg,image/webp"
+                style="display: none;" onchange="handleDCImageSelect(event)">
             </div>
-            
+
             <!-- DC Upload Progress -->
             <div class="upload-progress" id="dcUploadProgress">
               <div class="progress-bar">
@@ -2347,7 +2573,7 @@
               </div>
               <div class="progress-text" id="dcProgressText">Uploading...</div>
             </div>
-            
+
             <!-- DC Image Preview -->
             <div class="image-preview-container" id="dcImagePreview">
               <img id="dcImagePreviewImg" class="image-preview" src="" alt="Dispatch Image Preview">
@@ -2355,17 +2581,17 @@
                 <i class="fas fa-trash"></i> Remove Image
               </button>
             </div>
-            
+
             <!-- DC Image URL Input -->
             <div class="image-url-section" id="dcImageUrlSection">
               <label for="dcImageUrl">Or enter image URL</label>
-              <input type="text" id="dcImageUrl" class="form-control"
-                placeholder="https://example.com/image.jpg">
+              <input type="text" id="dcImageUrl" class="form-control" placeholder="https://example.com/image.jpg">
             </div>
-            
+
             <!-- Toggle between upload and URL -->
             <div style="margin-top: 10px; text-align: center;">
-              <button type="button" class="btn btn-sm btn-info" onclick="toggleDCImageSource()" id="toggleDCImageSourceBtn">
+              <button type="button" class="btn btn-sm btn-info" onclick="toggleDCImageSource()"
+                id="toggleDCImageSourceBtn">
                 <i class="fas fa-link"></i> Enter URL instead
               </button>
             </div>
@@ -2410,17 +2636,17 @@
   <!-- Main Application Script -->
   <script>
     // Firebase Configuration
-  const firebaseConfig = {
-  apiKey: "AIzaSyAV5HqOYOHC_kOMXXEWL5L4j0MfzKzQYHE",
-  authDomain: "global-stock-data.firebaseapp.com",
-  databaseURL: "https://global-stock-data-default-rtdb.firebaseio.com",
-  projectId: "global-stock-data",
-  storageBucket: "global-stock-data.firebasestorage.app",
-  messagingSenderId: "206870283444",
-  appId: "1:206870283444:web:bb712741e81384d8ff43e1",
-  measurementId: "G-8TSHJNMKL8"
-};
-    
+    const firebaseConfig = {
+      apiKey: "AIzaSyAV5HqOYOHC_kOMXXEWL5L4j0MfzKzQYHE",
+      authDomain: "global-stock-data.firebaseapp.com",
+      databaseURL: "https://global-stock-data-default-rtdb.firebaseio.com",
+      projectId: "global-stock-data",
+      storageBucket: "global-stock-data.firebasestorage.app",
+      messagingSenderId: "206870283444",
+      appId: "1:206870283444:web:bb712741e81384d8ff43e1",
+      measurementId: "G-8TSHJNMKL8"
+    };
+
     // Application Configuration
     const config = {
       defaultImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMxYTM2NWQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+SXRlbSBJbWFnZTwvdGV4dD48L3N2Zz4=',
@@ -2442,11 +2668,11 @@
       if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
       }
-      
+
       // Initialize Firestore
       db = firebase.firestore();
       storage = firebase.storage();
-      
+
       // Test Firebase connection with timeout
       setTimeout(() => {
         if (firebaseInitialized) {
@@ -2458,7 +2684,7 @@
           statusDiv.style.color = 'white';
         }
       }, 1000);
-      
+
       firebaseInitialized = true;
 
     } catch (error) {
@@ -2489,7 +2715,7 @@
       dcPrefix: 'DC',
       defaultImage: config.defaultImage
     };
-    
+
     // Image upload state
     let uploadedImageUrl = '';
     let uploadedDCImageUrl = '';
@@ -2545,7 +2771,7 @@
     const reportContents = document.querySelectorAll('.report-content');
     const saveItemBtn = document.getElementById('saveItemBtn');
     const offlineIndicator = document.getElementById('offlineIndicator');
-    
+
     // Image upload elements
     const imageDropZone = document.getElementById('imageDropZone');
     const imageInput = document.getElementById('imageInput');
@@ -2563,26 +2789,39 @@
     document.addEventListener('DOMContentLoaded', function () {
       initApp();
       setupEventListeners();
-      // Load data from localStorage first, then try Firebase
-      loadFromLocalStorage();
-      renderInventoryTable();
-      updateDashboard();
-      
-      // Try to load from Firebase in background
-      setTimeout(() => {
-        loadDataFromFirebase();
-      }, 1000);
-      
+
+      // Show loading indicator
+      showLoading('Connecting to Firebase...');
+
+      // Try to load from Firebase FIRST
+      loadDataFromFirebase()
+        .then(() => {
+          console.log("Successfully loaded from Firebase");
+          renderInventoryTable();
+          updateDashboard();
+          updateFirebaseStatus();
+          hideLoading();
+        })
+        .catch(error => {
+          console.log("Firebase failed, loading from localStorage:", error.message);
+          // Fallback to localStorage
+          loadFromLocalStorage();
+          renderInventoryTable();
+          updateDashboard();
+          updateFirebaseStatus();
+          hideLoading();
+          showToast('Using local data. Firebase connection failed.', 'warning');
+        });
+
       // Monitor online/offline status
       window.addEventListener('online', handleOnlineStatus);
       window.addEventListener('offline', handleOfflineStatus);
-      
+
       // Check initial status
       if (!navigator.onLine) {
         handleOfflineStatus();
       }
     });
-
     async function initApp() {
       // Set current date for forms
       const today = new Date().toISOString().split('T')[0];
@@ -2590,14 +2829,14 @@
       document.getElementById('dcDate').value = today;
       document.getElementById('reportStartDate').value = today;
       document.getElementById('reportEndDate').value = today;
-      
+
       // Set default dates for GRN/DC reports
       const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 2).toISOString().split('T')[0];
       document.getElementById('grnReportStartDate').value = firstDayOfMonth;
       document.getElementById('grnReportEndDate').value = today;
       document.getElementById('dcReportStartDate').value = firstDayOfMonth;
       document.getElementById('dcReportEndDate').value = today;
-      
+
       if (transDateFilter) transDateFilter.value = today;
 
       // Load settings from localStorage
@@ -2608,11 +2847,11 @@
 
       // Initialize report tabs
       initReportTabs();
-      
+
       // Hide image preview and URL input initially
       imagePreviewContainer.style.display = 'none';
       imageUrlSection.style.display = 'none';
-      
+
       // Hide DC image preview initially
       document.getElementById('dcImagePreview').style.display = 'none';
       document.getElementById('dcImageUrlSection').style.display = 'none';
@@ -2636,137 +2875,110 @@
       offlineIndicator.classList.add('show');
       showToast('You are offline. Working in local mode.', 'warning');
     }
-    
+
     // FIXED: Firebase Data Loading with Better Error Handling
     async function loadDataFromFirebase() {
-      try {
-        // Check if Firebase is properly initialized
-        if (!firebaseInitialized || !db || !isOnline) {
-          console.log("Firebase not available, using local storage only");
-          return;
-        }
-
-        console.log("Trying to load data from Firebase...");
-        
-        // Set a timeout for Firebase operations
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Firebase timeout')), 3000)
-        );
-
-        // Try to load inventory
-        const inventoryPromise = db.collection('inventory').get();
-        const inventoryResult = await Promise.race([inventoryPromise, timeoutPromise]);
-        
-        // If we get here, Firebase worked
-        inventory = [];
-        inventoryResult.forEach(doc => {
-          const data = doc.data();
-          // Ensure image field exists
-          if (!data.image) {
-            data.image = settings.defaultImage;
+      return new Promise(async (resolve, reject) => {
+        try {
+          // Check if Firebase is properly initialized
+          if (!firebaseInitialized || !db || !isOnline) {
+            console.log("Firebase not available, will use local storage");
+            reject(new Error("Firebase not available"));
+            return;
           }
-          inventory.push({
-            id: doc.id,
-            ...data
-          });
-        });
 
-        // Try to load GRN records
-        try {
-          const grnSnapshot = await db.collection('grn').get();
+          console.log("Trying to load data from Firebase...");
+
+          // Set a timeout for Firebase operations
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Firebase timeout')), 3000)
+          );
+
+          // Try to load inventory
+          const inventoryPromise = db.collection('inventory').get();
+          const inventoryResult = await Promise.race([inventoryPromise, timeoutPromise]);
+
+          // Clear existing inventory
+          inventory = [];
+
+          // Process Firebase data
+          inventoryResult.forEach(doc => {
+            const data = doc.data();
+            // Ensure image field exists
+            if (!data.image) {
+              data.image = settings.defaultImage;
+            }
+            inventory.push({
+              id: doc.id,
+              ...data
+            });
+          });
+
+          console.log(`Loaded ${inventory.length} items from Firebase`);
+
+          // Save to localStorage as backup
+          localStorage.setItem('inventory', JSON.stringify(inventory));
+          localStorage.setItem('lastSync', new Date().toISOString());
+
+          // Resolve the promise
+          resolve();
+
+        } catch (error) {
+          console.log("Firebase load failed:", error.message);
+          reject(error);
+        }
+      });
+    }
+    function loadFromLocalStorage() {
+      try {
+        // Only load from localStorage if inventory is empty (Firebase failed)
+        if (inventory.length === 0) {
+          const localInventory = localStorage.getItem('inventory');
+
+          if (localInventory) {
+            const parsedInventory = JSON.parse(localInventory);
+            inventory = parsedInventory.map(item => {
+              if (!item.image) {
+                item.image = settings.defaultImage;
+              }
+              return item;
+            });
+            console.log("Loaded inventory from localStorage:", inventory.length, "items");
+          }
+        }
+
+        // Load GRN records
+        const localGRN = localStorage.getItem('grnRecords');
+        if (localGRN) {
+          try {
+            grnRecords = JSON.parse(localGRN);
+          } catch (e) {
+            console.error("Error parsing local GRN:", e);
+            grnRecords = [];
+          }
+        } else {
           grnRecords = [];
-          grnSnapshot.forEach(doc => {
-            grnRecords.push({
-              id: doc.id,
-              ...doc.data()
-            });
-          });
-        } catch (grnError) {
-          console.warn("Could not load GRN records from Firebase:", grnError);
         }
 
-        // Try to load DC records
-        try {
-          const dcSnapshot = await db.collection('dc').get();
+        // Load DC records
+        const localDC = localStorage.getItem('dcRecords');
+        if (localDC) {
+          try {
+            dcRecords = JSON.parse(localDC);
+          } catch (e) {
+            console.error("Error parsing local DC:", e);
+            dcRecords = [];
+          }
+        } else {
           dcRecords = [];
-          dcSnapshot.forEach(doc => {
-            dcRecords.push({
-              id: doc.id,
-              ...doc.data()
-            });
-          });
-        } catch (dcError) {
-          console.warn("Could not load DC records from Firebase:", dcError);
         }
 
-        // Update transactions
         updateTransactions();
 
-        // Update UI
-        renderInventoryTable();
-        updateDashboard();
-
-        console.log("Data loaded successfully from Firebase");
-        showToast("Data synced from Firebase", "success");
-        
-        // Save to localStorage as backup
-        localStorage.setItem('inventory', JSON.stringify(inventory));
-        localStorage.setItem('grnRecords', JSON.stringify(grnRecords));
-        localStorage.setItem('dcRecords', JSON.stringify(dcRecords));
-        localStorage.setItem('lastSync', new Date().toISOString());
-        
       } catch (error) {
-        console.log("Firebase load failed, using local data:", error.message);
-        // Don't show error to user - just use local data
-        // The data is already loaded from localStorage on startup
+        console.error("Error loading from localStorage:", error);
       }
     }
-    
-    function loadFromLocalStorage() {
-      // Try to load from localStorage
-      const localInventory = localStorage.getItem('inventory');
-      const localGRN = localStorage.getItem('grnRecords');
-      const localDC = localStorage.getItem('dcRecords');
-      
-      if (localInventory) {
-        try {
-          inventory = JSON.parse(localInventory);
-          // Add default image to items without one
-          inventory.forEach(item => {
-            if (!item.image) {
-              item.image = settings.defaultImage;
-            }
-          });
-          console.log("Loaded inventory from localStorage:", inventory.length, "items");
-        } catch (e) {
-          console.error("Error parsing local inventory:", e);
-          loadSampleData();
-        }
-      } else {
-        loadSampleData();
-      }
-      
-      if (localGRN) {
-        try {
-          grnRecords = JSON.parse(localGRN);
-        } catch (e) {
-          console.error("Error parsing local GRN:", e);
-          grnRecords = [];
-        }
-      }
-      
-      if (localDC) {
-        try {
-          dcRecords = JSON.parse(localDC);
-        } catch (e) {
-          console.error("Error parsing local DC:", e);
-          dcRecords = [];
-        }
-      }
-      
-      updateTransactions();
-    }
-
     function loadSampleData() {
       // Sample inventory data with images
       inventory = [
@@ -2815,15 +3027,15 @@
     // FIXED: Save to localStorage first, then try Firebase
     async function saveInventoryToFirebase() {
       // Always save to localStorage first
-     // Remove image data before saving to localStorage
-const inventoryWithoutImages = inventory.map(item => {
-  const { image, imageData, base64, ...rest } = item; // Remove image fields
-  return rest;
-});
+      // Remove image data before saving to localStorage
+      const inventoryWithoutImages = inventory.map(item => {
+        const { image, imageData, base64, ...rest } = item; // Remove image fields
+        return rest;
+      });
 
-localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
+      localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       localStorage.setItem('lastSync', new Date().toISOString());
-      
+
       // Then try Firebase if available
       if (!firebaseInitialized || !db || !isOnline) {
         console.log("No Firebase connection, saved to local storage only");
@@ -2839,14 +3051,14 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
           // Remove any Firebase metadata
           delete cleanItem._firestore;
           delete cleanItem._key;
-          
+
           const itemRef = db.collection('inventory').doc(item.id);
           batch.set(itemRef, cleanItem, { merge: true });
         });
-        
+
         await batch.commit();
         console.log("Inventory saved to Firebase");
-        
+
       } catch (error) {
         console.error("Error saving inventory to Firebase:", error);
         // Don't show error to user - data is already saved locally
@@ -2866,7 +3078,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
         const cleanGRN = { ...grn };
         delete cleanGRN._firestore;
         delete cleanGRN._key;
-        
+
         await db.collection('grn').doc(grn.id).set(cleanGRN, { merge: true });
         console.log("GRN saved to Firebase");
 
@@ -2888,7 +3100,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
         const cleanDC = { ...dc };
         delete cleanDC._firestore;
         delete cleanDC._key;
-        
+
         await db.collection('dc').doc(dc.id).set(cleanDC, { merge: true });
         console.log("DC saved to Firebase");
 
@@ -2914,7 +3126,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       event.preventDefault();
       event.stopPropagation();
       event.currentTarget.classList.remove('drag-over');
-      
+
       const files = event.dataTransfer.files;
       if (files.length > 0) {
         await processImageFile(files[0]);
@@ -2934,25 +3146,25 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
         showToast('Please select an image file (JPG, PNG, JPEG, WebP)', 'error');
         return;
       }
-      
+
       // Validate file size (5MB max)
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         showToast('Image size exceeds 5MB limit. Please choose a smaller image.', 'error');
         return;
       }
-      
+
       // Show upload progress
       uploadProgress.style.display = 'block';
       progressFill.style.width = '10%';
       progressText.textContent = 'Processing image...';
-      
+
       // Disable save button during upload
       if (saveItemBtn) {
         saveItemBtn.disabled = true;
         saveItemBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
       }
-      
+
       try {
         // Compress image if needed
         let processedFile = file;
@@ -2961,49 +3173,49 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
           progressText.textContent = 'Compressing image...';
           processedFile = await compressImage(file);
         }
-        
+
         // Read file as data URL for preview
         progressFill.style.width = '60%';
         progressText.textContent = 'Loading image...';
-        
+
         const reader = new FileReader();
-        
+
         reader.onload = (e) => {
           // Set preview image
           imagePreview.src = e.target.result;
           uploadedImageUrl = e.target.result;
-          
+
           // Show preview
           imagePreviewContainer.style.display = 'block';
-          
+
           // Complete progress
           progressFill.style.width = '100%';
           progressText.textContent = 'Image ready!';
-          
+
           // Hide progress after delay
           setTimeout(() => {
             uploadProgress.style.display = 'none';
           }, 1000);
-          
+
           // Re-enable save button
           if (saveItemBtn) {
             saveItemBtn.disabled = false;
             saveItemBtn.innerHTML = '<i class="fas fa-save"></i> Save Item';
           }
-          
+
           // Show local storage info
           localStorageInfo.style.display = 'block';
-          
+
           showToast('Image loaded successfully', 'success');
         };
-        
+
         reader.onerror = () => {
           showToast('Error reading image file', 'error');
           resetImageUploadState();
         };
-        
+
         reader.readAsDataURL(processedFile);
-        
+
       } catch (error) {
         console.error('Image processing error:', error);
         showToast('Error processing image: ' + error.message, 'error');
@@ -3017,23 +3229,23 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
           resolve(file);
           return;
         }
-        
+
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        
+
         reader.onload = (event) => {
           const img = new Image();
           img.src = event.target.result;
-          
+
           img.onload = () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            
+
             // Calculate new dimensions (max 1200px on longest side)
             let width = img.width;
             let height = img.height;
             const maxSize = 1200;
-            
+
             if (width > height && width > maxSize) {
               height = Math.round((height * maxSize) / width);
               width = maxSize;
@@ -3041,13 +3253,13 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
               width = Math.round((width * maxSize) / height);
               height = maxSize;
             }
-            
+
             canvas.width = width;
             canvas.height = height;
-            
+
             // Draw and compress
             ctx.drawImage(img, 0, 0, width, height);
-            
+
             canvas.toBlob((blob) => {
               if (blob) {
                 resolve(new File([blob], file.name, {
@@ -3059,10 +3271,10 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
               }
             }, 'image/jpeg', 0.7); // 0.7 quality
           };
-          
+
           img.onerror = reject;
         };
-        
+
         reader.onerror = reject;
       });
     }
@@ -3077,7 +3289,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
     function toggleImageSource() {
       isUsingUrlForItem = !isUsingUrlForItem;
-      
+
       if (isUsingUrlForItem) {
         imageDropZone.style.display = 'none';
         imagePreviewContainer.style.display = 'none';
@@ -3112,7 +3324,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       event.preventDefault();
       event.stopPropagation();
       event.currentTarget.classList.remove('drag-over');
-      
+
       const files = event.dataTransfer.files;
       if (files.length > 0) {
         await processDCImageFile(files[0]);
@@ -3132,23 +3344,23 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
         showToast('Please select an image file (JPG, PNG, JPEG, WebP)', 'error');
         return;
       }
-      
+
       // Validate file size (5MB max)
       const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
         showToast('Image size exceeds 5MB limit. Please choose a smaller image.', 'error');
         return;
       }
-      
+
       // Show upload progress
       const dcUploadProgress = document.getElementById('dcUploadProgress');
       const dcProgressFill = document.getElementById('dcProgressFill');
       const dcProgressText = document.getElementById('dcProgressText');
-      
+
       dcUploadProgress.style.display = 'block';
       dcProgressFill.style.width = '10%';
       dcProgressText.textContent = 'Processing image...';
-      
+
       try {
         // Compress image if needed
         let processedFile = file;
@@ -3157,39 +3369,39 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
           dcProgressText.textContent = 'Compressing image...';
           processedFile = await compressImage(file);
         }
-        
+
         // Read file as data URL
         dcProgressFill.style.width = '60%';
         dcProgressText.textContent = 'Loading image...';
-        
+
         const reader = new FileReader();
         reader.onload = (e) => {
           // Set preview image
           document.getElementById('dcImagePreviewImg').src = e.target.result;
           uploadedDCImageUrl = e.target.result;
-          
+
           // Show preview
           document.getElementById('dcImagePreview').style.display = 'block';
-          
+
           // Complete progress
           dcProgressFill.style.width = '100%';
           dcProgressText.textContent = 'Image ready!';
-          
+
           // Hide progress after delay
           setTimeout(() => {
             dcUploadProgress.style.display = 'none';
           }, 1000);
-          
+
           showToast('DC image loaded successfully', 'success');
         };
-        
+
         reader.onerror = () => {
           showToast('Error reading DC image file', 'error');
           dcUploadProgress.style.display = 'none';
         };
-        
+
         reader.readAsDataURL(processedFile);
-        
+
       } catch (error) {
         console.error('DC image processing error:', error);
         showToast('Error processing DC image: ' + error.message, 'error');
@@ -3209,7 +3421,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       const dcImageUrlSection = document.getElementById('dcImageUrlSection');
       const dcImageDropZone = document.getElementById('dcImageDropZone');
       const toggleBtn = document.getElementById('toggleDCImageSourceBtn');
-      
+
       if (isUsingUrlForDC) {
         dcImageDropZone.style.display = 'none';
         dcImageUrlSection.style.display = 'block';
@@ -3237,7 +3449,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       uploadedImageUrl = '';
       isUsingUrlForItem = false;
       currentEditItemId = null;
-      
+
       // Reset image preview
       imagePreviewContainer.style.display = 'none';
       imageDropZone.style.display = 'block';
@@ -3245,16 +3457,16 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       uploadProgress.style.display = 'none';
       imageDropZone.classList.remove('drag-over');
       localStorageInfo.style.display = 'none';
-      
+
       // Reset progress
       progressFill.style.width = '0%';
       progressText.textContent = 'Uploading...';
-      
+
       // Reset toggle button text
       if (toggleImageSourceBtn) {
         toggleImageSourceBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Switch to URL Input';
       }
-      
+
       // Enable save button
       if (saveItemBtn) {
         saveItemBtn.disabled = false;
@@ -3266,13 +3478,13 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       createDCForm.reset();
       uploadedDCImageUrl = '';
       isUsingUrlForDC = false;
-      
+
       // Reset DC image preview
       document.getElementById('dcImagePreview').style.display = 'none';
       document.getElementById('dcImageDropZone').style.display = 'block';
       document.getElementById('dcImageUrlSection').style.display = 'none';
       document.getElementById('dcUploadProgress').style.display = 'none';
-      
+
       // Reset toggle button text
       const toggleBtn = document.getElementById('toggleDCImageSourceBtn');
       if (toggleBtn) {
@@ -3374,21 +3586,21 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       }
 
       // Form submissions
-      addItemForm.addEventListener('submit', async function(e) {
+      addItemForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         showLoading('Saving item...');
         await handleAddItem(e);
         hideLoading();
       });
 
-      createGRNForm.addEventListener('submit', async function(e) {
+      createGRNForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         showLoading('Creating GRN...');
         await handleCreateGRN(e);
         hideLoading();
       });
 
-      createDCForm.addEventListener('submit', async function(e) {
+      createDCForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         showLoading('Creating DC...');
         await handleCreateDC(e);
@@ -3397,14 +3609,14 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
       // Export button dropdown
       if (exportBtn) {
-        exportBtn.addEventListener('click', function(e) {
+        exportBtn.addEventListener('click', function (e) {
           e.stopPropagation();
           const exportOptions = document.querySelector('.export-options');
           exportOptions.style.display = exportOptions.style.display === 'block' ? 'none' : 'block';
         });
-        
+
         // Close dropdown when clicking elsewhere
-        document.addEventListener('click', function() {
+        document.addEventListener('click', function () {
           const exportOptions = document.querySelector('.export-options');
           exportOptions.style.display = 'none';
         });
@@ -3459,18 +3671,18 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       reportTabs.forEach(tab => {
         tab.addEventListener('click', function () {
           const reportId = this.getAttribute('data-report');
-          
+
           // Update active tab
           reportTabs.forEach(t => t.classList.remove('active'));
           this.classList.add('active');
-          
+
           // Show selected report content
           reportContents.forEach(content => {
             content.classList.remove('active');
             if (content.id === reportId) {
               content.classList.add('active');
               currentReportTab = reportId;
-              
+
               // Load data for the selected report
               if (reportId === 'grn-reports') {
                 generateGRNReport();
@@ -3580,7 +3792,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
         const stockClass = getStockClass(item.stock);
         const floorClass = `floor-${item.floor}`;
         const floorName = config.floors.find(f => f.id === item.floor)?.name || item.floor;
-        
+
         // Handle image - use item image or default
         let imageUrl = item.image || settings.defaultImage;
 
@@ -3764,7 +3976,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
       floorStats.innerHTML = html;
     }
-    
+
     function getFloorStockStatus(totalStock) {
       if (totalStock === 0) return 'Empty';
       if (totalStock < 10) return 'Low';
@@ -3859,7 +4071,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
     function showAddItemModal() {
       currentEditItemId = null;
       resetAddItemForm();
-      document.querySelector('#addItemModal .modal-title').innerHTML = 
+      document.querySelector('#addItemModal .modal-title').innerHTML =
         '<i class="fas fa-plus-circle"></i> Add New Item';
       addItemModal.classList.add('active');
     }
@@ -4080,7 +4292,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
           } else {
             itemData.createdAt = new Date().toISOString();
           }
-          
+
           inventory[itemIndex] = { ...inventory[itemIndex], ...itemData };
           showToast('Item updated successfully', 'success');
         }
@@ -4257,7 +4469,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       let html = '';
       inventory.forEach(item => {
         const floorName = config.floors.find(f => f.id === item.floor)?.name || item.floor;
-        
+
         // Get image URL
         let imageUrl = item.image || settings.defaultImage;
 
@@ -4334,7 +4546,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
     function generateFirstFloorReport() {
       currentReportTitle = '1st Floor Stock Report';
       currentReportData = inventory.filter(item => item.floor === 'first');
-      
+
       reportTableHead.innerHTML = `
         <tr>
           <th>Image</th>
@@ -4383,7 +4595,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
     function generateFourthFloorReport() {
       currentReportTitle = '4th Floor Stock Report';
       currentReportData = inventory.filter(item => item.floor === 'fourth');
-      
+
       reportTableHead.innerHTML = `
         <tr>
           <th>Image</th>
@@ -4432,7 +4644,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
     function generateFifthFloorReport() {
       currentReportTitle = '5th Floor Stock Report';
       currentReportData = inventory.filter(item => item.floor === 'fifth');
-      
+
       reportTableHead.innerHTML = `
         <tr>
           <th>Image</th>
@@ -4481,7 +4693,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
     function generateFloorWiseReport() {
       currentReportTitle = 'Floor-wise Stock Report';
       currentReportData = [...inventory];
-      
+
       reportTableHead.innerHTML = `
         <tr>
           <th>Floor</th>
@@ -4509,20 +4721,20 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
     function generateCategoryWiseReport() {
       currentReportTitle = 'Category-wise Stock Report';
-      
+
       // Get all unique categories
       const categories = [...new Set(inventory.map(item => item.category))];
       currentReportData = categories.map(category => {
         const categoryItems = inventory.filter(item => item.category === category);
         const totalStock = categoryItems.reduce((sum, item) => sum + item.stock, 0);
-        
+
         return {
           category,
           itemCount: categoryItems.length,
           totalStock
         };
       });
-      
+
       reportTableHead.innerHTML = `
         <tr>
           <th>Category</th>
@@ -4581,7 +4793,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
       // Supplier filter
       if (supplierFilter) {
-        filteredData = filteredData.filter(grn => 
+        filteredData = filteredData.filter(grn =>
           grn.supplier.toLowerCase().includes(supplierFilter)
         );
       }
@@ -4593,7 +4805,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
       // Item filter
       if (itemFilter) {
-        filteredData = filteredData.filter(grn => 
+        filteredData = filteredData.filter(grn =>
           grn.itemCode.toLowerCase().includes(itemFilter) ||
           grn.itemName.toLowerCase().includes(itemFilter)
         );
@@ -4660,7 +4872,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
       // Customer filter
       if (customerFilter) {
-        filteredData = filteredData.filter(dc => 
+        filteredData = filteredData.filter(dc =>
           dc.customer.toLowerCase().includes(customerFilter)
         );
       }
@@ -4672,7 +4884,7 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
       // Item filter
       if (itemFilter) {
-        filteredData = filteredData.filter(dc => 
+        filteredData = filteredData.filter(dc =>
           dc.itemCode.toLowerCase().includes(itemFilter) ||
           dc.itemName.toLowerCase().includes(itemFilter)
         );
@@ -4708,10 +4920,10 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
             <td>${floorName}</td>
             <td>${dc.quantity}</td>
             <td>
-              ${dispatchImage ? 
-                `<img src="${dispatchImage}" alt="Dispatch" class="report-image" 
-                     onclick="showBigImage('${dispatchImage.replace(/'/g, "\\'")}', 'Dispatch ${dc.id}')">` : 
-                '-'}
+              ${dispatchImage ?
+            `<img src="${dispatchImage}" alt="Dispatch" class="report-image" 
+                     onclick="showBigImage('${dispatchImage.replace(/'/g, "\\'")}', 'Dispatch ${dc.id}')">` :
+            '-'}
             </td>
             <td>${dc.notes || '-'}</td>
           </tr>
@@ -4733,17 +4945,17 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       const select = document.getElementById('grnItem');
       const selectedOption = select.options[select.selectedIndex];
       const infoDiv = document.getElementById('grnSelectedItemInfo');
-      
+
       if (select.value && selectedOption) {
         const code = selectedOption.getAttribute('data-code') || 'N/A';
         const name = selectedOption.getAttribute('data-name');
         const floor = selectedOption.getAttribute('data-floor');
         const floorName = config.floors.find(f => f.id === floor)?.name || floor;
-        
-        document.getElementById('grnSelectedItemText').textContent = 
+
+        document.getElementById('grnSelectedItemText').textContent =
           `${code} - ${name} - ${floorName}`;
         infoDiv.style.display = 'block';
-        
+
         // Auto-populate floor
         document.getElementById('grnFloor').value = floor;
       } else {
@@ -4755,19 +4967,19 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       const select = document.getElementById('dcItem');
       const selectedOption = select.options[select.selectedIndex];
       const infoDiv = document.getElementById('dcSelectedItemInfo');
-      
+
       if (select.value && selectedOption) {
         const code = selectedOption.getAttribute('data-code') || 'N/A';
         const name = selectedOption.getAttribute('data-name');
         const stock = selectedOption.getAttribute('data-stock');
         const floor = selectedOption.getAttribute('data-floor');
         const floorName = config.floors.find(f => f.id === floor)?.name || floor;
-        
-        document.getElementById('dcSelectedItemText').textContent = 
+
+        document.getElementById('dcSelectedItemText').textContent =
           `${code} - ${name} - ${floorName}`;
         document.getElementById('dcAvailableStock').textContent = stock;
         infoDiv.style.display = 'block';
-        
+
         // Auto-populate floor
         document.getElementById('dcFloor').value = floor;
       } else {
@@ -4779,18 +4991,18 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       const name = document.getElementById('itemName').value;
       const category = document.getElementById('itemCategory').value;
       const suggestionsDiv = document.getElementById('codeSuggestions');
-      
+
       if (!name || !category) {
         suggestionsDiv.innerHTML = '<small>Enter item name and category to get code suggestions</small>';
         return;
       }
-      
+
       // Generate suggestions
       const categoryCode = category.substring(0, 3).toUpperCase();
       const nameCode = name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
       const randomCode = categoryCode + '-' + String(Math.floor(Math.random() * 1000)).padStart(3, '0');
       const nameBasedCode = nameCode + '-' + String(Math.floor(Math.random() * 100)).padStart(2, '0');
-      
+
       suggestionsDiv.innerHTML = `
         <small>Suggestions:</small><br>
         <button type="button" onclick="useSuggestedCode('${randomCode}')" 
@@ -4806,17 +5018,17 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
 
     function useSuggestedCode(code) {
       document.getElementById('itemCode').value = code;
-      document.getElementById('codeSuggestions').innerHTML = 
+      document.getElementById('codeSuggestions').innerHTML =
         `<small>Using code: <strong>${code}</strong></small>`;
     }
 
     function editItem(id) {
       const item = inventory.find(i => i.id === id);
       if (!item) return;
-      
+
       // Store the original item for editing
       currentEditItemId = id;
-      
+
       // Populate the add item form with existing data
       document.getElementById('itemCode').value = item.code || '';
       document.getElementById('itemName').value = item.name;
@@ -4824,10 +5036,10 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
       document.getElementById('itemFloor').value = item.floor;
       document.getElementById('itemStock').value = item.stock;
       document.getElementById('itemDescription').value = item.description || '';
-      
+
       // Handle image
       uploadedImageUrl = null;
-      
+
       if (item.image && item.image !== settings.defaultImage) {
         if (item.image.startsWith('http') || item.image.startsWith('data:')) {
           imagePreview.src = item.image;
@@ -4846,75 +5058,75 @@ localStorage.setItem('inventory', JSON.stringify(inventoryWithoutImages));
         imageUrlSection.style.display = 'none';
         localStorageInfo.style.display = 'none';
       }
-      
+
       // Update toggle button text
-      toggleImageSourceBtn.innerHTML = isUsingUrlForItem ? 
-        '<i class="fas fa-exchange-alt"></i> Switch to File Upload' : 
+      toggleImageSourceBtn.innerHTML = isUsingUrlForItem ?
+        '<i class="fas fa-exchange-alt"></i> Switch to File Upload' :
         '<i class="fas fa-exchange-alt"></i> Switch to URL Input';
-      
+
       // Change form title
-      document.querySelector('#addItemModal .modal-title').innerHTML = 
+      document.querySelector('#addItemModal .modal-title').innerHTML =
         '<i class="fas fa-edit"></i> Edit Item';
-      
+
       // Show the modal
       addItemModal.classList.add('active');
     }
 
-  async function deleteItem(id) {
-  if (!confirm('Are you sure you want to delete this item?')) {
-    return;
-  }
-  
-  showLoading('Deleting item...');
-  
-  const itemIndex = inventory.findIndex(i => i.id === id);
-  if (itemIndex === -1) {
-    hideLoading();
-    return;
-  }
-  
-  try {
-    // Remove from inventory array
-    inventory.splice(itemIndex, 1);
-    
-    // Delete from Firebase if available
-    await deleteFromFirebase('inventory', id);
-    
-    // Save to localStorage
-    localStorage.setItem('inventory', JSON.stringify(inventory));
-    
-    // Update UI
-    renderInventoryTable();
-    updateDashboard();
-    
-    showToast('Item deleted successfully', 'success');
-    
-  } catch (error) {
-    console.error('Error deleting item:', error);
-    showToast('Item deleted locally (Firebase sync failed)', 'warning');
-    
-    // Still update UI even if Firebase fails
-    renderInventoryTable();
-    updateDashboard();
-  } finally {
-    hideLoading();
-  }
-}
-async function deleteFromFirebase(collectionName, docId) {
-  try {
-    if (!firebaseInitialized || !db || !isOnline) {
-      console.log("Firebase not available, skipping delete");
-      return false;
+    async function deleteItem(id) {
+      if (!confirm('Are you sure you want to delete this item?')) {
+        return;
+      }
+
+      showLoading('Deleting item...');
+
+      const itemIndex = inventory.findIndex(i => i.id === id);
+      if (itemIndex === -1) {
+        hideLoading();
+        return;
+      }
+
+      try {
+        // Remove from inventory array
+        inventory.splice(itemIndex, 1);
+
+        // Delete from Firebase if available
+        await deleteFromFirebase('inventory', id);
+
+        // Save to localStorage
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+
+        // Update UI
+        renderInventoryTable();
+        updateDashboard();
+
+        showToast('Item deleted successfully', 'success');
+
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        showToast('Item deleted locally (Firebase sync failed)', 'warning');
+
+        // Still update UI even if Firebase fails
+        renderInventoryTable();
+        updateDashboard();
+      } finally {
+        hideLoading();
+      }
     }
-    
-    await db.collection(collectionName).doc(docId).delete();
-    console.log(`Deleted ${docId} from ${collectionName} collection`);
-    return true;
-  } catch (error) {
-    console.error(`Error deleting from ${collectionName}:`, error);
-    return false;
-  }
-}
+    async function deleteFromFirebase(collectionName, docId) {
+      try {
+        if (!firebaseInitialized || !db || !isOnline) {
+          console.log("Firebase not available, skipping delete");
+          return false;
+        }
+
+        await db.collection(collectionName).doc(docId).delete();
+        console.log(`Deleted ${docId} from ${collectionName} collection`);
+        return true;
+      } catch (error) {
+        console.error(`Error deleting from ${collectionName}:`, error);
+        return false;
+      }
+    }
 
     function showBigImage(src, title) {
       bigImage.src = src;
@@ -4940,12 +5152,12 @@ async function deleteFromFirebase(collectionName, docId) {
           'Floor': config.floors.find(f => f.id === item.floor)?.name || item.floor,
           'Stock': item.stock
         }));
-        
+
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
         XLSX.writeFile(wb, 'inventory_simple.xlsx');
-        
+
         showToast('Simple Excel export completed', 'success');
       } catch (error) {
         console.error('Simple export error:', error);
@@ -4963,7 +5175,7 @@ async function deleteFromFirebase(collectionName, docId) {
         'Description': (item.description || '').substring(0, 200),
         'Image URL': (item.image || '').substring(0, 255)
       })));
-      
+
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
       XLSX.writeFile(wb, 'inventory_data.xlsx');
@@ -4975,7 +5187,7 @@ async function deleteFromFirebase(collectionName, docId) {
         showToast('No data to export', 'warning');
         return;
       }
-      
+
       let ws;
       switch (currentReportTab) {
         case 'grn-reports':
@@ -5013,7 +5225,7 @@ async function deleteFromFirebase(collectionName, docId) {
           })));
           break;
       }
-      
+
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, currentReportTitle);
       XLSX.writeFile(wb, `${currentReportTitle.replace(/\s+/g, '_')}.xlsx`);
@@ -5032,7 +5244,7 @@ async function deleteFromFirebase(collectionName, docId) {
         'Party': t.party,
         'Created At': new Date(t.createdAt).toLocaleString()
       })));
-      
+
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
       XLSX.writeFile(wb, 'transactions.xlsx');
@@ -5043,14 +5255,14 @@ async function deleteFromFirebase(collectionName, docId) {
       const data = config.floors.map(floor => {
         const floorItems = inventory.filter(item => item.floor === floor.id);
         const totalStock = floorItems.reduce((sum, item) => sum + item.stock, 0);
-        
+
         return {
           'Floor': floor.name,
           'Total Items': floorItems.length,
           'Total Stock': totalStock
         };
       });
-      
+
       const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Floor Summary');
@@ -5062,7 +5274,7 @@ async function deleteFromFirebase(collectionName, docId) {
       const recentTransactions = [...transactions]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 20);
-      
+
       const ws = XLSX.utils.json_to_sheet(recentTransactions.map(t => ({
         'Time': new Date(t.createdAt).toLocaleTimeString(),
         'Type': t.type,
@@ -5072,34 +5284,34 @@ async function deleteFromFirebase(collectionName, docId) {
         'Party': t.party,
         'Date': t.date
       })));
-      
+
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Recent Activity');
       XLSX.writeFile(wb, 'recent_activity.xlsx');
       showToast('Recent activity exported to Excel', 'success');
     }
-    
+
     function exportDataWithImages(floor = 'all') {
       try {
         // Filter items based on floor if specified
         let itemsToExport = inventory;
         let reportTitle = 'Inventory Report with Images';
         let fileName = 'inventory_report_with_images.html';
-        
+
         if (floor !== 'all') {
           itemsToExport = inventory.filter(item => item.floor === floor);
           const floorName = config.floors.find(f => f.id === floor)?.name || floor;
           reportTitle = `${floorName} Inventory Report`;
           fileName = `${floorName.replace(/\s+/g, '_')}_inventory_report.html`;
-          
+
           if (itemsToExport.length === 0) {
             showToast(`No items found in ${floorName}`, 'warning');
             return;
           }
         }
-        
+
         const htmlContent = createHTMLExportWithImages(itemsToExport, reportTitle, floor);
-        
+
         // Create a blob and download
         const blob = new Blob([htmlContent], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
@@ -5110,10 +5322,10 @@ async function deleteFromFirebase(collectionName, docId) {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        
+
         const floorMsg = floor === 'all' ? '' : ` (${config.floors.find(f => f.id === floor)?.name})`;
         showToast(`Inventory report${floorMsg} exported as HTML`, 'success');
-        
+
       } catch (error) {
         console.error('Export error:', error);
         showToast('Error exporting with images', 'error');
@@ -5125,16 +5337,16 @@ async function deleteFromFirebase(collectionName, docId) {
       const itemsToExport = items || inventory;
       const today = new Date().toLocaleDateString();
       const time = new Date().toLocaleTimeString();
-      
+
       // Determine title
       let title = customTitle || 'Inventory Report with Images';
       let floorInfo = '';
-      
+
       if (floor !== 'all') {
         const floorName = config.floors.find(f => f.id === floor)?.name || floor;
         floorInfo = `<div class="floor-info">Floor: ${floorName}</div>`;
       }
-      
+
       let html = `
 <!DOCTYPE html>
 <html>
@@ -5273,18 +5485,18 @@ async function deleteFromFirebase(collectionName, docId) {
         </thead>
         <tbody>
 `;
-  
+
       itemsToExport.forEach((item, index) => {
         const floorName = config.floors.find(f => f.id === item.floor)?.name || item.floor;
         let imageUrl = item.image || settings.defaultImage;
-        
+
         // Stock status styling
         let stockClass = '';
         if (item.stock === 0) stockClass = 'stock-out';
         else if (item.stock < 10) stockClass = 'stock-low';
         else if (item.stock < 50) stockClass = 'stock-medium';
         else stockClass = 'stock-high';
-        
+
         html += `
             <tr>
                 <td>${index + 1}</td>
@@ -5303,7 +5515,7 @@ async function deleteFromFirebase(collectionName, docId) {
             </tr>
 `;
       });
-  
+
       html += `
         </tbody>
     </table>
@@ -5333,21 +5545,21 @@ async function deleteFromFirebase(collectionName, docId) {
             });
         });
   `;
-  
+
       return html;
     }
 
     async function exportFullReport() {
       try {
         showToast('Creating full report...', 'info');
-        
+
         // Check if JSZip is available
         if (typeof JSZip === 'undefined') {
           throw new Error('JSZip library not loaded. Using alternative export.');
         }
-        
+
         const zip = new JSZip();
-        
+
         // 1. Create Excel file (without images)
         const ws = XLSX.utils.json_to_sheet(inventory.map(item => {
           return {
@@ -5360,61 +5572,61 @@ async function deleteFromFirebase(collectionName, docId) {
             'Image URL': (item.image || '').substring(0, 255)
           };
         }));
-        
+
         // Set column widths
         const wscols = [
-          {wch: 15},
-          {wch: 25},
-          {wch: 15},
-          {wch: 15},
-          {wch: 10},
-          {wch: 30},
-          {wch: 40}
+          { wch: 15 },
+          { wch: 25 },
+          { wch: 15 },
+          { wch: 15 },
+          { wch: 10 },
+          { wch: 30 },
+          { wch: 40 }
         ];
         ws['!cols'] = wscols;
-        
+
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
         const excelData = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         zip.file('inventory_data.xlsx', excelData);
-        
+
         // 2. Create HTML reports for each floor
         // All floors report
         zip.file('inventory_all_floors.html', createHTMLExportWithImages(inventory, 'Complete Inventory Report', 'all'));
-        
+
         // Ground Floor
         const groundItems = inventory.filter(item => item.floor === 'ground');
         if (groundItems.length > 0) {
           zip.file('inventory_ground_floor.html', createHTMLExportWithImages(groundItems, 'Ground Floor Inventory Report', 'ground'));
         }
-        
+
         // 1st Floor
         const firstItems = inventory.filter(item => item.floor === 'first');
         if (firstItems.length > 0) {
           zip.file('inventory_1st_floor.html', createHTMLExportWithImages(firstItems, '1st Floor Inventory Report', 'first'));
         }
-        
+
         // 4th Floor
         const fourthItems = inventory.filter(item => item.floor === 'fourth');
         if (fourthItems.length > 0) {
           zip.file('inventory_4th_floor.html', createHTMLExportWithImages(fourthItems, '4th Floor Inventory Report', 'fourth'));
         }
-        
+
         // 5th Floor
         const fifthItems = inventory.filter(item => item.floor === 'fifth');
         if (fifthItems.length > 0) {
           zip.file('inventory_5th_floor.html', createHTMLExportWithImages(fifthItems, '5th Floor Inventory Report', 'fifth'));
         }
-        
+
         // 3. Generate and download ZIP
         const content = await zip.generateAsync({ type: 'blob' });
         saveAs(content, `inventory_full_report_${Date.now()}.zip`);
-        
+
         showToast('Full report exported as ZIP file (includes all floors)', 'success');
-        
+
       } catch (error) {
         console.error('Export error:', error);
-        
+
         // Fallback: Export as HTML only
         if (error.message.includes('JSZip')) {
           showToast('Using fallback export (HTML only)', 'warning');
@@ -5434,7 +5646,7 @@ async function deleteFromFirebase(collectionName, docId) {
       if (savedSettings) {
         try {
           settings = JSON.parse(savedSettings);
-          
+
           // Apply settings to UI
           document.getElementById('companyName').value = settings.companyName;
           document.getElementById('grnPrefix').value = settings.grnPrefix;
@@ -5451,7 +5663,7 @@ async function deleteFromFirebase(collectionName, docId) {
       settings.grnPrefix = document.getElementById('grnPrefix').value;
       settings.dcPrefix = document.getElementById('dcPrefix').value;
       settings.defaultImage = document.getElementById('defaultImage').value || config.defaultImage;
-      
+
       localStorage.setItem('stockSettings', JSON.stringify(settings));
       showToast('Settings saved successfully', 'success');
     }
@@ -5464,15 +5676,15 @@ async function deleteFromFirebase(collectionName, docId) {
           dcPrefix: 'DC',
           defaultImage: config.defaultImage
         };
-        
+
         localStorage.removeItem('stockSettings');
-        
+
         // Reset UI
         document.getElementById('companyName').value = settings.companyName;
         document.getElementById('grnPrefix').value = settings.grnPrefix;
         document.getElementById('dcPrefix').value = settings.dcPrefix;
         document.getElementById('defaultImage').value = settings.defaultImage;
-        
+
         showToast('Settings reset to default', 'info');
       }
     }
@@ -5480,22 +5692,22 @@ async function deleteFromFirebase(collectionName, docId) {
     function showToast(message, type = 'info') {
       // Set toast content and style
       toastMessage.textContent = message;
-      
+
       // Set icon based on type
       let icon = 'fa-info-circle';
       if (type === 'success') icon = 'fa-check-circle';
       if (type === 'error') icon = 'fa-times-circle';
       if (type === 'warning') icon = 'fa-exclamation-triangle';
-      
+
       toastIcon.className = `fas ${icon} toast-icon`;
-      
+
       // Set toast class for styling
       toast.className = 'toast';
       toast.classList.add(`toast-${type}`);
-      
+
       // Show toast
       toast.classList.add('show');
-      
+
       // Auto-hide after 3 seconds
       setTimeout(() => {
         toast.classList.remove('show');
@@ -5529,7 +5741,818 @@ async function deleteFromFirebase(collectionName, docId) {
         timeout = setTimeout(later, wait);
       };
     }
+    function updateFirebaseStatus() {
+      const statusDiv = document.getElementById('firebaseStatus');
+      if (!statusDiv) return;
+
+      // Clear any previous content
+      statusDiv.innerHTML = '';
+
+      if (firebaseInitialized && isOnline) {
+        const lastSync = localStorage.getItem('lastSync');
+        const lastSyncTime = lastSync ? new Date(lastSync).toLocaleTimeString() : 'Never';
+
+        statusDiv.style.display = 'block';
+        statusDiv.style.backgroundColor = '#38a169';
+        statusDiv.style.color = 'white';
+        statusDiv.style.padding = '10px';
+        statusDiv.style.marginBottom = '20px';
+        statusDiv.style.borderRadius = '5px';
+        statusDiv.style.fontSize = '14px';
+
+        statusDiv.innerHTML = `
+      <i class="fas fa-check-circle"></i> 
+      <strong>Connected to Firebase</strong> | 
+      ${inventory.length} items loaded | 
+      Last sync: ${lastSyncTime} |
+      <button onclick="forceRefreshFromFirebase()" style="margin-left: 10px; padding: 2px 8px; background: white; color: #38a169; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">
+        <i class="fas fa-sync-alt"></i> Refresh
+      </button>
+    `;
+      } else {
+        statusDiv.style.display = 'block';
+        statusDiv.style.backgroundColor = '#e53e3e';
+        statusDiv.style.color = 'white';
+        statusDiv.style.padding = '10px';
+        statusDiv.style.marginBottom = '20px';
+        statusDiv.style.borderRadius = '5px';
+        statusDiv.style.fontSize = '14px';
+
+        statusDiv.innerHTML = `
+      <i class="fas fa-exclamation-triangle"></i> 
+      <strong>Working Offline</strong> - Using Local Data (${inventory.length} items)
+    `;
+      }
+    }
+    async function forceRefreshFromFirebase() {
+      showLoading('Refreshing from Firebase...');
+      try {
+        await loadDataFromFirebase();
+        renderInventoryTable();
+        updateDashboard();
+        updateFirebaseStatus();
+        showToast('Data refreshed from Firebase', 'success');
+      } catch (error) {
+        showToast('Could not refresh from Firebase', 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+    async function forceRefreshFromFirebase() {
+      showLoading('Refreshing from Firebase...');
+      try {
+        await loadDataFromFirebase();
+        renderInventoryTable();
+        updateDashboard();
+        updateFirebaseStatus();
+        showToast('Data refreshed from Firebase', 'success');
+      } catch (error) {
+        showToast('Could not refresh from Firebase: ' + error.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+    // Add this function to cache images
+async function loadImageWithCache(url, itemId) {
+  const cacheKey = `image_${itemId}`;
+  
+  // Check local cache first
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    return cached;
+  }
+  
+  // Try to load from URL
+  try {
+    if (url.startsWith('data:')) {
+      return url; // Base64 image
+    }
     
+    // For Firebase images, you might want to implement proper caching
+    return url;
+    
+  } catch (error) {
+    console.error('Error loading image:', error);
+    return settings.defaultImage;
+  }
+}
+// Add these variables to your application state
+let excelFileData = null;
+let excelPreviewData = [];
+
+// Add these event listeners in setupEventListeners()
+document.getElementById('importBtn').addEventListener('click', showImportModal);
+document.getElementById('closeImportModal').addEventListener('click', () => {
+  document.getElementById('importExcelModal').classList.remove('active');
+  resetImportForm();
+});
+document.getElementById('cancelImport').addEventListener('click', () => {
+  document.getElementById('importExcelModal').classList.remove('active');
+  resetImportForm();
+});
+document.getElementById('startImportBtn').addEventListener('click', startImport);
+
+// Excel Import Functions
+function showImportModal() {
+  resetImportForm();
+  document.getElementById('importExcelModal').classList.add('active');
+}
+
+function handleExcelDragOver(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget.classList.add('drag-over');
+}
+
+function handleExcelDragLeave(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget.classList.remove('drag-over');
+}
+
+function handleExcelDrop(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget.classList.remove('drag-over');
+  
+  const files = event.dataTransfer.files;
+  if (files.length > 0) {
+    processExcelFile(files[0]);
+  }
+}
+
+function handleExcelSelect(event) {
+  const files = event.target.files;
+  if (files.length > 0) {
+    processExcelFile(files[0]);
+  }
+}
+
+function processExcelFile(file) {
+  // Validate file type
+  const validTypes = [
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel',
+    'text/csv'
+  ];
+  
+  if (!validTypes.includes(file.type) && !file.name.match(/\.(xlsx|xls|csv)$/i)) {
+    showToast('Please select an Excel file (.xlsx, .xls, .csv)', 'error');
+    return;
+  }
+  
+  // Show progress
+  const progressDiv = document.getElementById('excelUploadProgress');
+  const progressFill = document.getElementById('excelProgressFill');
+  const progressText = document.getElementById('excelProgressText');
+  
+  progressDiv.style.display = 'block';
+  progressFill.style.width = '20%';
+  progressText.textContent = 'Reading file...';
+  
+  const reader = new FileReader();
+  
+  reader.onload = function(e) {
+    try {
+      progressFill.style.width = '50%';
+      progressText.textContent = 'Processing data...';
+      
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      
+      // Get first sheet
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      
+      // Convert to JSON
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      
+      excelFileData = jsonData;
+      
+      // Show file info
+      document.getElementById('excelFileName').textContent = file.name;
+      document.getElementById('excelFileSize').textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
+      document.getElementById('excelFileInfo').style.display = 'block';
+      
+      // Preview data
+      previewExcelData(jsonData);
+      
+      // Complete progress
+      progressFill.style.width = '100%';
+      progressText.textContent = 'File loaded successfully!';
+      
+      setTimeout(() => {
+        progressDiv.style.display = 'none';
+      }, 1000);
+      
+      // Enable import button
+      document.getElementById('startImportBtn').disabled = false;
+      
+      showToast('Excel file loaded successfully', 'success');
+      
+    } catch (error) {
+      console.error('Error processing Excel:', error);
+      showToast('Error reading Excel file: ' + error.message, 'error');
+      progressDiv.style.display = 'none';
+    }
+  };
+  
+  reader.onerror = function() {
+    showToast('Error reading file', 'error');
+    progressDiv.style.display = 'none';
+  };
+  
+  reader.readAsArrayBuffer(file);
+}
+
+function previewExcelData(data) {
+  const previewBody = document.getElementById('excelPreviewBody');
+  const statsDiv = document.getElementById('excelStats');
+  
+  if (!data || data.length === 0) {
+    previewBody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+          No data found in file
+        </td>
+      </tr>
+    `;
+    statsDiv.innerHTML = '<small>Total rows: 0 | Valid rows: 0 | Errors: 0</small>';
+    return;
+  }
+  
+  // Validate and preview first 5 rows
+  let validCount = 0;
+  let errorCount = 0;
+  excelPreviewData = [];
+  
+  let html = '';
+  const previewRows = Math.min(5, data.length);
+  
+  for (let i = 0; i < previewRows; i++) {
+    const row = data[i];
+    const validation = validateImportRow(row, i + 1);
+    
+   // Inside previewExcelData function
+if (validation.isValid) {
+  validCount++;
+  excelPreviewData.push(row);
+  
+  // Get values with all possible field names
+  const itemCode = row['Item Code'] || row['item code'] || row['ITEM CODE'] || row['Code'] || 
+                   row['ITEM CODE'] || row.__EMPTY_1 || 'N/A';
+  
+  const itemName = row['Item Name'] || row['item name'] || row['ITEM NAME'] || row['Name'] || 
+                   row['ITEM NAME'] || row.__EMPTY_2 || '';
+  
+  const category = row['Category'] || row['category'] || row['CATEGORY'] || row['Type'] || 
+                   row['CATEGORY'] || row.__EMPTY_3 || 'Other';
+  
+  const floorValue = row['Floor'] || row['floor'] || row['FLOOR'] || row['Location'] || 
+                     row['FLOOR'] || row.__EMPTY_4 || '';
+  
+  const stockValue = row['Stock'] || row['stock'] || row['STOCK'] || row['Quantity'] || 
+                     row['Qty'] || row['STOCK'] || row.__EMPTY_5 || 0;
+  
+  const imageUrl = row['Image URL'] || row['image url'] || row['IMAGE URL'] || 
+                   row['Image'] || row['ImageUrl'] || '';
+  
+  // Clean up the data for display
+  const cleanItemName = itemName.toString().replace(/\r\n/g, ' ').replace(/\n/g, ' ').trim();
+  const cleanStock = stockValue.toString().replace(/\r\nunits/g, '').replace(/units/g, '').trim();
+  
+  // Convert floor format
+  let floorDisplay = 'ground';
+  if (floorValue) {
+    const floorStr = floorValue.toString().toLowerCase().trim();
+    if (floorStr.includes('ground')) floorDisplay = 'ground';
+    else if (floorStr.includes('1st') || floorStr.includes('first')) floorDisplay = 'first';
+    else if (floorStr.includes('4th') || floorStr.includes('fourth')) floorDisplay = 'fourth';
+    else if (floorStr.includes('5th') || floorStr.includes('fifth')) floorDisplay = 'fifth';
+  }
+  
+  html += `
+    <tr style="background-color: rgba(56, 161, 105, 0.1);">
+      <td>${i + 1}</td>
+      <td><strong>${itemCode}</strong></td>
+      <td>${cleanItemName}</td>
+      <td>${category}</td>
+      <td>${floorDisplay}</td>
+      <td>${cleanStock}</td>
+      <td>${imageUrl && imageUrl !== '-' ? '✓' : '✗'}</td>
+    </tr>
+  `;
+
+
+    } else {
+      errorCount++;
+      html += `
+        <tr style="background-color: rgba(229, 62, 62, 0.1);">
+          <td>${i + 1}</td>
+          <td colspan="6" style="color: var(--danger-color);">
+            <i class="fas fa-exclamation-circle"></i> ${validation.message}
+          </td>
+        </tr>
+      `;
+    }
+  }
+  
+  previewBody.innerHTML = html;
+  
+  statsDiv.innerHTML = `
+    <small>
+      Total rows: ${data.length} | 
+      Valid rows: ${validCount} | 
+      Errors: ${errorCount} |
+      Preview: ${previewRows} of ${data.length} rows
+    </small>
+  `;
+  
+  // Add log entry
+  addImportLog(`Loaded ${data.length} rows, ${validCount} valid, ${errorCount} errors`);
+}
+
+function validateImportRow(row, rowNumber) {
+  // Try to get values from all possible field names
+  const itemCode = row['Item Code'] || row['item code'] || row['ITEM CODE'] || row['Code'] || 
+                   row['ITEM CODE'] || row.__EMPTY_1 || row['__EMPTY_1'];
+  
+  const itemName = row['Item Name'] || row['item name'] || row['ITEM NAME'] || row['Name'] || 
+                   row['ITEM NAME'] || row.__EMPTY_2 || row['__EMPTY_2'];
+  
+  const floorValue = row['Floor'] || row['floor'] || row['FLOOR'] || row['Location'] || 
+                     row['FLOOR'] || row.__EMPTY_4 || row['__EMPTY_4'];
+  
+  const stockValue = row['Stock'] || row['stock'] || row['STOCK'] || row['Quantity'] || 
+                     row['Qty'] || row['STOCK'] || row.__EMPTY_5 || row['__EMPTY_5'];
+  
+  // Check required fields
+  if (!itemCode || itemCode.toString().trim() === '') {
+    return {
+      isValid: false,
+      message: `Row ${rowNumber}: Missing Item Code`
+    };
+  }
+  
+  if (!itemName || itemName.toString().trim() === '') {
+    return {
+      isValid: false,
+      message: `Row ${rowNumber}: Missing Item Name`
+    };
+  }
+  
+  if (!floorValue || floorValue.toString().trim() === '') {
+    return {
+      isValid: false,
+      message: `Row ${rowNumber}: Missing Floor`
+    };
+  }
+  
+  return { isValid: true, message: '' };
+}
+function removeExcelFile() {
+  excelFileData = null;
+  excelPreviewData = [];
+  
+  document.getElementById('excelFileInfo').style.display = 'none';
+  document.getElementById('excelInput').value = '';
+  document.getElementById('startImportBtn').disabled = true;
+  
+  document.getElementById('excelPreviewBody').innerHTML = `
+    <tr>
+      <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+        No file selected
+      </td>
+    </tr>
+  `;
+  
+  document.getElementById('excelStats').innerHTML = '<small>Total rows: 0 | Valid rows: 0 | Errors: 0</small>';
+  addImportLog('File removed');
+}
+
+function addImportLog(message) {
+  const logDiv = document.getElementById('importLog');
+  const timestamp = new Date().toLocaleTimeString();
+  logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+  logDiv.scrollTop = logDiv.scrollHeight;
+}
+
+async function startImport() {
+  if (!excelFileData || excelFileData.length === 0) {
+    showToast('No data to import', 'error');
+    return;
+  }
+  
+  const importMode = document.getElementById('importMode').value; // Get the import mode
+  const defaultImage = document.getElementById('defaultImportImage').value || settings.defaultImage;
+  
+  showLoading('Importing items...');
+  
+  try {
+    let importedCount = 0;
+    let updatedCount = 0;
+    let errorCount = 0;
+    
+    // Clear log
+    document.getElementById('importLog').innerHTML = '<div>Starting import...</div>';
+    
+    // Process each row
+    for (let i = 0; i < excelFileData.length; i++) {
+      const row = excelFileData[i];
+      const validation = validateImportRow(row, i + 1);
+      
+      if (!validation.isValid) {
+        errorCount++;
+        addImportLog(`Row ${i + 1}: ${validation.message}`);
+        continue;
+      }
+      
+      try {
+        // Process the row - PASS THE importMode PARAMETER
+        const result = await processImportRow(row, importMode, defaultImage, i);
+        
+        if (result.action === 'updated') {
+          updatedCount++;
+          addImportLog(`Row ${i + 1}: Updated item ${row['Item Code'] || row.__EMPTY_1}`);
+        } else if (result.action === 'added') {
+          importedCount++;
+          addImportLog(`Row ${i + 1}: Added item ${row['Item Code'] || row.__EMPTY_1}`);
+        } else if (result.action === 'skipped') {
+          addImportLog(`Row ${i + 1}: Skipped - ${result.reason}`);
+        }
+        
+      } catch (error) {
+        errorCount++;
+        addImportLog(`Row ${i + 1}: Error - ${error.message}`);
+      }
+      
+      // Update progress
+      const progress = Math.round(((i + 1) / excelFileData.length) * 100);
+      const progressDiv = document.getElementById('excelUploadProgress');
+      const progressFill = document.getElementById('excelProgressFill');
+      const progressText = document.getElementById('excelProgressText');
+      
+      progressDiv.style.display = 'block';
+      progressFill.style.width = `${progress}%`;
+      progressText.textContent = `Processing ${i + 1}/${excelFileData.length} items...`;
+    }
+    
+    // Save to Firebase and localStorage
+    await saveInventoryToFirebase();
+    
+    // Hide progress
+    document.getElementById('excelUploadProgress').style.display = 'none';
+    
+    // Show summary
+    addImportLog('Import completed!');
+    addImportLog(`Imported: ${importedCount} | Updated: ${updatedCount} | Errors: ${errorCount}`);
+    
+    showToast(`Import completed: ${importedCount} added, ${updatedCount} updated, ${errorCount} errors`, 'success');
+    
+    // Update UI
+    renderInventoryTable();
+    updateDashboard();
+    
+    // Reset form after delay
+    setTimeout(() => {
+      document.getElementById('importExcelModal').classList.remove('active');
+      resetImportForm();
+    }, 2000);
+    
+  } catch (error) {
+    console.error('Import error:', error);
+    showToast('Import failed: ' + error.message, 'error');
+    addImportLog(`Fatal error: ${error.message}`);
+  } finally {
+    hideLoading();
+  }
+}
+async function processImportRow(row, importModeParam, defaultImage, rowIndex) {
+  // Debug: Log the row to see actual field names
+  console.log("Processing row:", row);
+  
+  // Check what fields we have
+  console.log("Available fields:", Object.keys(row));
+  
+  // Extract values - first try proper headers, then try __EMPTY_X format
+  const itemCode = row['Item Code'] || row['item code'] || row['ITEM CODE'] || row['Code'] || 
+                   row['ITEM CODE'] || row.__EMPTY_1 || '';
+  
+  const itemName = row['Item Name'] || row['item name'] || row['ITEM NAME'] || row['Name'] || 
+                   row['ITEM NAME'] || row.__EMPTY_2 || '';
+  
+  const category = row['Category'] || row['category'] || row['CATEGORY'] || row['Type'] || 
+                   row['CATEGORY'] || row.__EMPTY_3 || 'Other';
+  
+  const floorValue = row['Floor'] || row['floor'] || row['FLOOR'] || row['Location'] || 
+                     row['FLOOR'] || row.__EMPTY_4 || '';
+  
+  const stockValue = row['Stock'] || row['stock'] || row['STOCK'] || row['Quantity'] || 
+                     row['Qty'] || row['STOCK'] || row.__EMPTY_5 || 0;
+  
+  const description = row['Description'] || row['description'] || row['DESCRIPTION'] || 
+                      row['Desc'] || row.__EMPTY_6 || '';
+  
+  const imageUrlValue = row['Image URL'] || row['image url'] || row['IMAGE URL'] || 
+                        row['Image'] || row['ImageUrl'] || '';
+
+  // Clean up the data (remove \r\n from the text)
+  const cleanItemName = itemName.toString().replace(/\r\n/g, ' ').replace(/\n/g, ' ').trim();
+  const cleanStockValue = stockValue.toString().replace(/\r\nunits/g, '').replace(/units/g, '').trim();
+  
+  // Convert floor format
+  let floorId = 'ground';
+  if (floorValue) {
+    const floorStr = floorValue.toString().toLowerCase().trim();
+    if (floorStr.includes('ground')) floorId = 'ground';
+    else if (floorStr.includes('1st') || floorStr.includes('first')) floorId = 'first';
+    else if (floorStr.includes('4th') || floorStr.includes('fourth')) floorId = 'fourth';
+    else if (floorStr.includes('5th') || floorStr.includes('fifth')) floorId = 'fifth';
+  }
+  
+  // Parse stock - handle cases like "1 units" or "1\r\nunits"
+  let stock = 0;
+  try {
+    // Extract just the number part
+    const stockMatch = cleanStockValue.match(/\d+/);
+    if (stockMatch) {
+      stock = parseInt(stockMatch[0]);
+    } else {
+      stock = parseInt(cleanStockValue) || 0;
+    }
+  } catch (e) {
+    stock = 0;
+  }
+  
+  // Validate required fields
+  if (!itemCode || itemCode.toString().trim() === '') {
+    throw new Error(`Missing Item Code in row ${rowIndex + 1}`);
+  }
+  
+  if (!cleanItemName || cleanItemName === '') {
+    throw new Error(`Missing Item Name in row ${rowIndex + 1}`);
+  }
+  
+  // Process image
+  let imageUrl = defaultImage;
+  if (imageUrlValue && imageUrlValue.toString().trim() !== '' && 
+      imageUrlValue.toString().trim() !== '-') {
+    const url = imageUrlValue.toString().trim();
+    
+    // Check if it's a valid image URL
+    if (url.startsWith('http://') || 
+        url.startsWith('https://') || 
+        url.startsWith('data:image/') ||
+        url.includes('.jpg') || 
+        url.includes('.jpeg') || 
+        url.includes('.png') ||
+        url.includes('.webp') ||
+        url.includes('.gif')) {
+      
+      imageUrl = url;
+      
+      // Try to load the image to verify it's valid (in background)
+      try {
+        const testImg = new Image();
+        testImg.src = url;
+        testImg.onerror = () => {
+          console.warn(`Invalid image URL in row ${rowIndex + 1}: ${url}`);
+          // We'll still use the URL, but log the warning
+        };
+      } catch (error) {
+        console.error(`Error with image URL in row ${rowIndex + 1}:`, error);
+      }
+    } else {
+      console.log(`Skipping invalid image URL format in row ${rowIndex + 1}: ${url}`);
+      imageUrl = defaultImage;
+    }
+  }
+
+  console.log(`Row ${rowIndex + 1} - Image URL:`, imageUrlValue, "=>", imageUrl);
+  
+  // Create item data object
+  const itemData = {
+    code: itemCode.toString().trim(),
+    name: cleanItemName,
+    category: category.toString().trim() || 'Other',
+    floor: floorId,
+    stock: stock,
+    image: imageUrl,
+    description: description.toString().trim() || '',
+    updatedAt: new Date().toISOString()
+  };
+  
+  console.log("Processed item data:", itemData);
+  
+  // Check if item exists
+  const existingIndex = inventory.findIndex(item => item.code === itemData.code);
+  
+  // Use the importMode parameter passed to the function
+  const importMode = importModeParam || document.getElementById('importMode').value;
+  
+  if (importMode === 'replace') {
+    // Clear inventory first if this is the first row
+    if (rowIndex === 0) {
+      console.log("Clearing inventory for replace mode");
+      inventory = [];
+    }
+    const newItem = {
+      id: 'excel-' + Date.now() + '-' + rowIndex,
+      ...itemData,
+      createdAt: new Date().toISOString()
+    };
+    inventory.push(newItem);
+    console.log("Added new item:", newItem);
+    return { action: 'added', item: newItem };
+    
+  } else if (importMode === 'update' && existingIndex !== -1) {
+    // Update existing item
+    inventory[existingIndex] = {
+      ...inventory[existingIndex],
+      ...itemData
+    };
+    console.log("Updated existing item:", inventory[existingIndex]);
+    return { action: 'updated', item: inventory[existingIndex] };
+    
+  } else if (importMode === 'add') {
+    // Only add if doesn't exist
+    if (existingIndex === -1) {
+      const newItem = {
+        id: 'excel-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+        ...itemData,
+        createdAt: new Date().toISOString()
+      };
+      inventory.push(newItem);
+      console.log("Added new item (add mode):", newItem);
+      return { action: 'added', item: newItem };
+    } else {
+      console.log("Skipped item - already exists:", itemData.code);
+      return { action: 'skipped', reason: 'already exists' };
+    }
+  }
+  
+  console.log("Skipped item - unknown reason");
+  return { action: 'skipped', reason: 'unknown' };
+}
+function resetImportForm() {
+  excelFileData = null;
+  excelPreviewData = [];
+  
+  document.getElementById('excelFileInfo').style.display = 'none';
+  document.getElementById('excelInput').value = '';
+  document.getElementById('excelUploadProgress').style.display = 'none';
+  document.getElementById('startImportBtn').disabled = true;
+  
+  document.getElementById('excelPreviewBody').innerHTML = `
+    <tr>
+      <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+        No file selected
+      </td>
+    </tr>
+  `;
+  
+  document.getElementById('excelStats').innerHTML = '<small>Total rows: 0 | Valid rows: 0 | Errors: 0</small>';
+  document.getElementById('importLog').innerHTML = '<div>Ready to import...</div>';
+}
+
+async function uploadImageToFirebase(file, itemCode) {
+  if (!firebaseInitialized || !storage || !isOnline) {
+    return null; // Return null if offline
+  }
+  
+  try {
+    // Create a unique filename
+    const timestamp = Date.now();
+    const fileName = `items/${itemCode}_${timestamp}.jpg`;
+    
+    // Upload to Firebase Storage
+    const storageRef = storage.ref().child(fileName);
+    const snapshot = await storageRef.put(file);
+    const downloadURL = await snapshot.ref.getDownloadURL();
+    
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading image to Firebase:', error);
+    return null;
+  }
+}
+
+// Add this function to validate image URLs
+function validateAndLoadImage(url) {
+  return new Promise((resolve) => {
+    if (!url || url === '' || url === '-') {
+      resolve(settings.defaultImage);
+      return;
+    }
+    
+    const img = new Image();
+    img.onload = () => resolve(url);
+    img.onerror = () => {
+      console.warn(`Failed to load image: ${url}`);
+      resolve(settings.defaultImage);
+    };
+    
+    // Set a timeout for image loading
+    setTimeout(() => {
+      if (!img.complete) {
+        console.warn(`Image load timeout: ${url}`);
+        resolve(settings.defaultImage);
+      }
+    }, 5000);
+    
+    img.src = url;
+  });
+}
+// Add PDF import option to your HTML
+function addPDFImportOption() {
+  // Add to import modal
+  const importModeSelect = document.getElementById('importMode');
+  
+  // Add after existing options
+  const pdfOption = document.createElement('option');
+  pdfOption.value = 'pdf_import';
+  pdfOption.textContent = 'Import from PDF (with images)';
+  
+  // Insert at appropriate position
+  importModeSelect.appendChild(pdfOption);
+}
+
+// PDF import function
+function handlePDFImport(pdfFile) {
+  // This is a complex function that would require PDF.js library
+  // For basic implementation:
+  console.log('PDF import not fully implemented - would require PDF.js');
+  
+  // For now, show a message
+  showToast('PDF import requires additional setup. Use Excel with image URLs instead.', 'warning');
+}
+// Add to your import modal
+function addMixedImportOption() {
+  const html = `
+  <div class="form-group full-width" id="imageFolderSection" style="display: none;">
+    <label>Upload Image Folder (Optional)</label>
+    <div class="image-upload-container" id="folderDropZone"
+         onclick="document.getElementById('folderInput').click()"
+         ondragover="handleFolderDragOver(event)"
+         ondragleave="handleFolderDragLeave(event)"
+         ondrop="handleFolderDrop(event)">
+      <i class="fas fa-folder-open image-upload-icon"></i>
+      <p class="image-upload-text">Drag & drop image folder here</p>
+      <p class="image-upload-subtext">Images should match item codes (CHAIR-001.jpg)</p>
+      <input type="file" id="folderInput" webkitdirectory directory multiple 
+             style="display: none;" onchange="handleFolderSelect(event)">
+    </div>
+  </div>
+  `;
+  
+  // Add this to your import modal
+  document.getElementById('importForm').insertAdjacentHTML('beforeend', html);
+  
+  // Add event listener to show/hide based on import mode
+  document.getElementById('importMode').addEventListener('change', function() {
+    const folderSection = document.getElementById('imageFolderSection');
+    folderSection.style.display = this.value === 'mixed' ? 'block' : 'none';
+  });
+}
+
+// Handle folder upload
+let imageFiles = [];
+
+function handleFolderSelect(event) {
+  imageFiles = Array.from(event.target.files).filter(file => 
+    file.type.startsWith('image/')
+  );
+  
+  showToast(`Loaded ${imageFiles.length} images from folder`, 'success');
+}
+
+// In processImportRow function, add image matching
+function matchImageToItem(itemCode) {
+  if (!imageFiles || imageFiles.length === 0) return null;
+  
+  // Try different variations
+  const possibleNames = [
+    `${itemCode}.jpg`,
+    `${itemCode}.jpeg`,
+    `${itemCode}.png`,
+    `${itemCode}.webp`,
+    itemCode, // Just the code as filename
+    itemCode.replace(/-/g, '_'), // CHAIR-001 -> CHAIR_001.jpg
+  ];
+  
+  for (const name of possibleNames) {
+    const foundFile = imageFiles.find(file => 
+      file.name.toLowerCase() === name.toLowerCase()
+    );
+    
+    if (foundFile) {
+      return URL.createObjectURL(foundFile);
+    }
+  }
+  
+  return null;
+}
   </script>
 </body>
+
 </html>
